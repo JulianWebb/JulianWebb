@@ -1,11 +1,13 @@
 @font-face {
     font-family: 'SignikaNegative';
     src: url('./assets/SignikaNegative-Bold.ttf');
+    font-display: swap;
 }
 
 @font-face {
     font-family: 'MapleLeaf';
     src: url('./assets/mapleleaf.ttf');
+    font-display: swap;
 }
 
 html, body {

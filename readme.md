@@ -1,1 +1,3 @@
-Hello, this is a readme.
+<img src="assets/wave.png" align="left" style="width:25%;"/> Welcome to my Github profile. Here you will see the 6 projects I've found decent enough to showcase, my spotty track record of commits, and a living list of public actions I've taken on the site. As you can see I mainly work in Javascript, though I have touched other languages like HTML, CSS, SQL, Python, Lua, etc. (which is not an exhaustive list of languages I've worked in, just the ones I have evidence of). I've also made contributions to various Documentation but that's mainly typo fixes. 
+<br clear="left" />
+I can't think of anything else to add here, so that's it! Hope you have a good day.
