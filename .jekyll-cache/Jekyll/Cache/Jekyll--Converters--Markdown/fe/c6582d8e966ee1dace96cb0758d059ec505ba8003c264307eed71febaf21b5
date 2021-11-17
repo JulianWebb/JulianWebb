@@ -1,0 +1,167 @@
+I"g7<p>Recently I had the opportunity to reflect on my choices regarding instant messaging platforms. Discord has been my go-to for the past half-decade, with limited jaunts to IRC, Matrix, etc. for troubleshooting efforts, which feels odd in retrospect considering before that I was using everything from AIM, MSN Messenger, IRC, to even home-grown implementations found on the roads less travelled.</p>
+
+<p>Now don’t get me wrong, having to only deal with a single application/account definitely has it’s perks; as long as platform has the features you want it just <em>works</em>. However it also has it’s downsides; once you’re in you’re more or less locked-in unless you got a high enough charisma stat to get people to follow you to a new platform or are willing to make a whole new friend group outside of it.</p>
+
+<p>Anyways, this is all to say, I wanted to branch out again, test the instant messaging waters so to speak, and after some research I decided to try setting up a Synapse homeserver. Why? Becuase go big or go home.</p>
+
+<p>In this post I’ll outline the steps I took including setting up Synapse and what configuration I used. My install used simple username and password authentication and a 3rd party SMTP provider. I did not <a href="https://matrix-org.github.io/synapse/latest/turn-howto.html">set up a TURN server</a> during my experience so that will not be included.</p>
+
+<p>As Docker Compose is an extension of Docker syntax, all the steps involving it <em>can</em> be done without it however that will be an exercise left to the reader.</p>
+
+<div style="position: relative;">
+	<a href="#toc-skipped" class="screen-reader-only">Skip table of contents</a>
+</div>
+<ul id="markdown-toc">
+  <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a>    <ul>
+      <li><a href="#knowledge" id="markdown-toc-knowledge">Knowledge</a></li>
+      <li><a href="#resources" id="markdown-toc-resources">Resources</a></li>
+    </ul>
+  </li>
+  <li><a href="#definitions" id="markdown-toc-definitions">Definitions</a></li>
+  <li><a href="#instructions" id="markdown-toc-instructions">Instructions</a>    <ul>
+      <li><a href="#domain-preperation" id="markdown-toc-domain-preperation">Domain Preperation</a></li>
+      <li><a href="#generating-a-configuration-file" id="markdown-toc-generating-a-configuration-file">Generating a Configuration File</a></li>
+      <li><a href="#editing-homeserveryaml" id="markdown-toc-editing-homeserveryaml">Editing ‘homeserver.yaml’</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+  <li><a href="#further-reading" id="markdown-toc-further-reading">Further Reading</a></li>
+</ul>
+<div id="toc-skipped"></div>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>If <em>(for some reason)</em> you are using this as a guide for doing this yourself, you will need the following:</p>
+
+<h3 id="knowledge">Knowledge</h3>
+<ul>
+  <li><em>basic</em> Ubuntu Server and Linux</li>
+  <li><em>basic</em> Docker, Docker Compose</li>
+  <li><em>basic</em> Traefix Proxy</li>
+</ul>
+
+<h3 id="resources">Resources</h3>
+<ul>
+  <li>Internet-Accessible Server
+    <ul>
+      <li>Ubuntu 20.04 <em>or newer</em></li>
+      <li>4GB of RAM <em>minimum</em></li>
+      <li>8GB of Storage <em>minimum</em></li>
+      <li>Terminal access</li>
+    </ul>
+  </li>
+  <li>Domain Name
+    <ul>
+      <li>Use of ports <code class="language-plaintext highlighter-rouge">443</code> and <code class="language-plaintext highlighter-rouge">8448</code><sup>†<sup></sup></sup></li>
+    </ul>
+  </li>
+  <li>Required Tools
+    <ul>
+      <li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04">Docker</a></li>
+      <li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04">Docker Compose</a></li>
+      <li><a href="https://doc.traefik.io/traefik/getting-started/quick-start/#launch-traefik-with-the-docker-provider">Traefik</a> with Docker Provider</li>
+    </ul>
+  </li>
+  <li>Caffeine Delivery System <em>(optional)</em></li>
+</ul>
+
+<p><sup><sup>†</sup>Alternatives described in <a href="#domain-set-up">Domain Set-up</a> <br />
+<em>Need a server? Get $100 in credit for 2 months through my <a href="https://m.do.co/c/2d2f25b376ae">DigitalOcean Referral Code</a>!</em> <br />
+<em>Need a domain? Get $5 off your first one through my <a href="https://www.name.com/referral/302312">Name.com Referral Code</a>!</em></sup> <br />
+Assuming you have everything above squared away you can continue!</p>
+
+<h2 id="definitions">Definitions</h2>
+
+<h3 class="no_toc" id="matrix">Matrix</h3>
+<p><a href="https://en.wikipedia.org/wiki/Matrix_(protocol)">Matrix</a> is a Real-Time Communication Protocol and Open Standard that relies on the federation of “homeservers” to build a communication network.</p>
+
+<h3 class="no_toc" id="matrixorg">Matrix.org</h3>
+<p><a href="https://matrix.org/foundation/">Matrix.org</a> is the non-profit foundation behind the Matrix protocol. They also develop and distribute Synapse.</p>
+
+<h3 class="no_toc" id="element">Element</h3>
+<p><a href="https://en.wikipedia.org/wiki/Element_(software)">Element</a> is both a Matrix Client and the name of the company behind said Client</p>
+
+<h3 class="no_toc" id="synapse">Synapse</h3>
+<p><a href="https://matrix.org/docs/projects/server/synapse">Synapse</a> is the most popular homeserver implementation. Created by the Matrix.org team and the subject of this blog post.</p>
+
+<h3 class="no_toc" id="homeserver">Homeserver</h3>
+<p>A homeserver is the term used by Matrix to specify that it’s a Matrix server and not a web server, a virtual private server, a minecraft server, etc. It is the “home” of the users registered at your server and where the messages from the channels of other homeservers they have joined will be collected.</p>
+
+<h3 class="no_toc" id="federation">Federation</h3>
+<p>Federation is the inter-connectivity of independent and distinct systems using a formalized protocol. Anyone can set-up their own Matrix homeserver and connect it to a federated Matrix network.</p>
+
+<h2 id="instructions">Instructions</h2>
+
+<h3 id="domain-preperation">Domain Preperation</h3>
+<p>As one of the first steps of setting up Synapse involves informing it of the domain being used, it makes sense to talk about it first.</p>
+
+<p>With Matrix, the domain, aka “server name”, is used as an identifier for the homesever and local users when interacting with other servers and users. Changing the domain will be treated as making a completely new homeserver. There is <a href="https://github.com/matrix-org/matrix-doc/blob/neilalexander/identities/proposals/2787-portable-identities.md">a proposal</a> for Portable Identities which might help with server migration but as of now it’s still in drafts, so choose carefully now to avoid potential headaches.</p>
+
+<p>A homeserver’s server name plays a key factor in the identifier for the users and rooms created on it, providing a namespace to reduce collisions between names on ever growing networks. It also can function as quick way to distingush your association, e.g. <code class="language-plaintext highlighter-rouge">@jake:statefarm.com</code>, <code class="language-plaintext highlighter-rouge">@bear:big.blue.house</code>, or <code class="language-plaintext highlighter-rouge">@geralt:riv.ia</code>. Given that, it’s recommended that you have your homeserver use a clean version of your domain; <code class="language-plaintext highlighter-rouge">@neo:zion.city</code> would be a better choice than <code class="language-plaintext highlighter-rouge">@neo:chat.zion.city</code>, for example.</p>
+
+<p>With all that out of the way, let’s begin planning.</p>
+
+<p>Both Clients and other Homeservers will attempt to connect with yours using HTTPS, however they both default to using different ports. Client-Server communication defaults to standard <code class="language-plaintext highlighter-rouge">443</code> of HTTPS while Server-Server communication uses <code class="language-plaintext highlighter-rouge">8448</code>. Synapse, of course, listens for both clients and other servers over HTTP on port <code class="language-plaintext highlighter-rouge">8008</code>; that is where using a reverse proxy, in our case traefik, comes in, which we will configure later.</p>
+
+<p>If assigning port <code class="language-plaintext highlighter-rouge">443</code> (or <code class="language-plaintext highlighter-rouge">8448</code>) on your domain is an issue, there are alternative methods avaliable to let you keep it as your server name. These include configuring your reverse proxy to forward only <a href="https://matrix-org.github.io/synapse/latest/reverse_proxy.html">specific paths/locations to Matrix</a> or add forwarding info to another domain, either via <a href="https://matrix-org.github.io/synapse/latest/delegate.html#well-known-delegation">serving a JSON file</a> or <a href="https://matrix-org.github.io/synapse/latest/delegate.html#srv-dns-record-delegation">using a SRV record</a>. Neither will be covered in this post directly.</p>
+
+<p>Assuming you don’t have those issues, the only real step here is to make sure your domain is correctly pointed towards your server!</p>
+
+<h3 id="generating-a-configuration-file">Generating a Configuration File</h3>
+
+<p>In the working directory of your choice, create the following as <code class="language-plaintext highlighter-rouge">docker-compose.yml</code></p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">synapse</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s2">"</span><span class="s">matrixdotorg/synapse:latest"</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s2">"</span><span class="s">yournamingscheme-synapse"</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">SYNAPSE_SERVER_NAME</span><span class="pi">:</span> <span class="s2">"</span><span class="s">example.org"</span>
+      <span class="na">SYNAPSE_REPORT_STATS</span><span class="pi">:</span> <span class="s2">"</span><span class="s">yes"</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">type</span><span class="pi">:</span> <span class="s2">"</span><span class="s">bind"</span>
+        <span class="na">source</span><span class="pi">:</span> <span class="s2">"</span><span class="s">${PWD}/synapse"</span>
+        <span class="na">target</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/data"</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s2">"</span><span class="s">unless-stopped"</span>
+</code></pre></div></div>
+<p>In your instance:</p>
+<ul>
+  <li>replace <code class="language-plaintext highlighter-rouge">yournamingscheme-synapse</code> with a naming scheme of your choice.</li>
+  <li>replace <code class="language-plaintext highlighter-rouge">example.org</code> with your server name of choice</li>
+  <li>optionally, change <code class="language-plaintext highlighter-rouge">SYNAPSE_REPORT_STATS</code> to <code class="language-plaintext highlighter-rouge">"no"</code> if you don’t want to share information with Matrix.org</li>
+  <li>optionally, change the <code class="language-plaintext highlighter-rouge">source</code> of the volume to a different location.</li>
+</ul>
+
+<p>then create a <code class="language-plaintext highlighter-rouge">synapse</code> directory in your working directory</p>
+
+<p>once ready run <code class="language-plaintext highlighter-rouge">docker-compose run synapse generate</code> and you should get output like this:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>julian@server:/docker/yournamingscheme/synapse<span class="nv">$ </span>docker-compose run synapse generate
+Creating log config /data/example.org.log.config
+Generating config file /data/homeserver.yaml
+Generating signing key file /data/example.org.signing.key
+A config file has been generated <span class="k">in</span> <span class="s1">'/data/homeserver.yaml'</span> <span class="k">for </span>server name <span class="s1">'example.org'</span><span class="nb">.</span> Please review this file and customise it to your needs.
+</code></pre></div></div>
+<p>It may seem unresponsive for a short while during the generation but it should complete in a reasonable timeframe.</p>
+
+<h3 id="editing-homeserveryaml">Editing ‘homeserver.yaml’</h3>
+
+<p>Using nano, or your text editor of choice, open the homeserver.yaml: <code class="language-plaintext highlighter-rouge">sudo nano ./synapse/homeserver.yaml</code>. <br />
+There are a lot of configuration options, most with quick summaries commented above them. For now though we will focus on a select few, though I do recommend always reading the documentation.</p>
+
+<h4 class="no_toc" id="-server-">## Server ##</h4>
+<p>From the top down you should see <code class="language-plaintext highlighter-rouge">server_name</code>, this should already be filled with the value you passed into the container via <code class="language-plaintext highlighter-rouge">SYNAPSE_SERVER_NAME</code>.</p>
+
+<p>Next is the listener section, the only change to make is to remove <code class="language-plaintext highlighter-rouge">bind_addresses: ['::1', '127.0.0.1']</code> from the configuration for port 8008. Synapse will be using HTTP since Traefik will be unwrapping the HTTPS for it.</p>
+
+<h4 class="no_toc" id="-database-">## Database ##</h4>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+  <li><a href="https://matrix-org.github.io/synapse/latest/welcome_and_overview.html">Synapse Documentation</a></li>
+  <li><a href="https://spec.matrix.org/v1.1/">Matrix Specification</a></li>
+</ul>
+:ET

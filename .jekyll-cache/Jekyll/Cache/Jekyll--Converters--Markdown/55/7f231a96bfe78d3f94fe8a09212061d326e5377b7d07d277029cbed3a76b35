@@ -1,0 +1,99 @@
+I"�<p>Recently I had the opportunity to reflect on my choices regarding instant messaging platforms. Discord has been my go-to for the past half-decade, with limited jaunts to IRC, Matrix, etc. for troubleshooting efforts, which feels odd in retrospect considering before that I was using everything from AIM, MSN Messenger, IRC, to even home-grown implementations found on the roads less travelled.</p>
+
+<p>Now don’t get me wrong, having to only deal with a single application/account definitely has it’s perks; as long as platform has the features you want it just <em>works</em>. However it also has it’s downsides; once you’re in you’re more or less locked-in unless you got a high enough charisma stat to get people to follow you to a new platform or are willing to make a whole new friend group outside of it.</p>
+
+<p>Anyways, this is all to say, I wanted to branch out again, test the instant messaging waters so to speak, and after some research I decided to try setting up a Synapse homeserver. Why? Becuase go big or go home.</p>
+
+<p>In this post I’ll outline the steps I took including setting up Synapse and what configuration I used. My install used simple username and password authentication and a 3rd party SMTP provider. I did not <a href="https://matrix-org.github.io/synapse/latest/turn-howto.html">set up a TURN server</a> during my experience so that will not be included.</p>
+
+<p>As Docker Compose is an extension of Docker syntax, all the steps involving it <em>can</em> be done without it however that will be an exercise left to the reader.</p>
+
+<div style="position: relative;">
+	<a href="#toc-skipped" class="screen-reader-only">Skip table of contents</a>
+</div>
+<ul id="markdown-toc">
+  <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a>    <ul>
+      <li><a href="#knowledge" id="markdown-toc-knowledge">Knowledge</a></li>
+      <li><a href="#resources" id="markdown-toc-resources">Resources</a></li>
+    </ul>
+  </li>
+  <li><a href="#definitions" id="markdown-toc-definitions">Definitions</a></li>
+  <li><a href="#instructions" id="markdown-toc-instructions">Instructions</a>    <ul>
+      <li><a href="#domain-set-up" id="markdown-toc-domain-set-up">Domain Set-up</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+<div id="toc-skipped"></div>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>If (for some reason) you are using this as a guide for doing this yourself, you will need the following:</p>
+
+<h3 id="knowledge">Knowledge</h3>
+<ul>
+  <li><em>basic</em> Ubuntu Server and Linux</li>
+  <li><em>basic</em> Docker, Docker Compose</li>
+  <li><em>basic</em> Traefix Proxy</li>
+  <li><em>basic</em> DNS Configuration</li>
+</ul>
+
+<h3 id="resources">Resources</h3>
+<ul>
+  <li>Internet-Accessible Server
+    <ul>
+      <li>Ubuntu 20.04 <em>or newer</em></li>
+      <li>4GB of RAM <em>minimum</em></li>
+      <li>8GB of Storage <em>minimum</em></li>
+      <li>Terminal access</li>
+    </ul>
+  </li>
+  <li>Domain Name
+    <ul>
+      <li>Ability to add DNS Records</li>
+    </ul>
+  </li>
+  <li>Required Tools
+    <ul>
+      <li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04">Docker</a></li>
+      <li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04">Docker Compose</a></li>
+      <li><a href="https://doc.traefik.io/traefik/getting-started/quick-start/#launch-traefik-with-the-docker-provider">Traefik</a> with Docker Provider</li>
+    </ul>
+  </li>
+  <li>Caffeine Delivery System <em>(optional)</em></li>
+</ul>
+
+<p><sup><em>Need a server? Get $100 in credit for 2 months through my <a href="https://m.do.co/c/2d2f25b376ae">DigitalOcean Referral Code</a>!</em> <br />
+<em>Need a domain? Get $5 off your first one through my <a href="https://www.name.com/referral/302312">Name.com Referral Code</a>!</em></sup></p>
+
+<p>Assuming you have everything above squared away you can continue!</p>
+
+<h2 id="definitions">Definitions</h2>
+
+<h3 class="no_toc" id="matrix">Matrix</h3>
+<p><a href="https://en.wikipedia.org/wiki/Matrix_(protocol)">Matrix</a> is a Real-Time Communication Protocol and Open Standard that relies on the federation of “homeservers” to build a communication network.</p>
+
+<h3 class="no_toc" id="matrixorg">Matrix.org</h3>
+<p><a href="https://matrix.org/foundation/">Matrix.org</a> is the non-profit foundation behind the Matrix protocol. They also develop and distribute Synapse.</p>
+
+<h3 class="no_toc" id="element">Element</h3>
+<p><a href="https://en.wikipedia.org/wiki/Element_(software)">Element</a> is both a Matrix Client and the name of the company behind said Client</p>
+
+<h3 class="no_toc" id="synapse">Synapse</h3>
+<p><a href="https://matrix.org/docs/projects/server/synapse">Synapse</a> is the most popular homeserver implementation. Created by the Matrix.org team and the subject of this blog post.</p>
+
+<h3 class="no_toc" id="homeserver">Homeserver</h3>
+<p>A homeserver is the term used by Matrix to specify that it’s a Matrix server and not a web server, a virtual private server, a minecraft server, etc. It is the “home” of the users registered at your server and where the messages from the channels of other homeservers they have joined will be collected.</p>
+
+<h3 class="no_toc" id="federation">Federation</h3>
+<p>Federation is the inter-connectivity of independent and distinct systems using a formalized protocol. Anyone can set-up their own Matrix homeserver and connect it to a federated Matrix network.</p>
+
+<h2 id="instructions">Instructions</h2>
+
+<h3 id="domain-set-up">Domain Set-up</h3>
+<p>As one of the first steps of setting up Synapse involves informing it of the domain being used, it makes sense to talk about it first.</p>
+
+<p>With Matrix, the domain is used as an identifier for the homesever when interacting both with users and other servers. Changing a domain will be treated as making a completely new homeserver. There is <a href="https://github.com/matrix-org/matrix-doc/blob/neilalexander/identities/proposals/2787-portable-identities.md">a proposal</a> for Portable Identities which might help with server migration but as of now it’s still in drafts, so choose carefully now to avoid potential headaches.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+:ET

@@ -1,0 +1,47 @@
+I"	<p> Recently I had the opportunity to reflect on my choices regarding instant messaging platforms. Discord has been my go-to for the past half-decade, with limited jaunts to IRC, Matrix, etc. for troubleshooting efforts, which feels odd in retrospect considering before that I was using everything from AIM, MSN Messenger, IRC, to even home-grown implementations found the roads less travelled.</p>
+
+<p>Now don’t get me wrong, having to only deal with a single application/account definitely has it’s perks; as long as platform has the features you want it just <em>works</em>. However it also has it’s downsides; once you’re in you’re more or less locked-in unless you got a high enough charisma stat to get people to follow you to a new platform or are willing to make a whole new friend group outside of it.</p>
+
+<p>Anyways, this is all to say, I wanted to branch out again, test the instant messaging waters so to speak, and after some research I decided to try setting up a Synapse homeserver. Why? Becuase go big or go home.</p>
+
+<div style="position: relative;">
+	<a href="#toc-skipped" class="screen-reader-only">Skip table of contents</a>
+</div>
+<ul id="markdown-toc">
+  <li><a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a>    <ul>
+      <li><a href="#knowledge" id="markdown-toc-knowledge">Knowledge</a></li>
+      <li><a href="#resources" id="markdown-toc-resources">Resources</a></li>
+    </ul>
+  </li>
+</ul>
+<div id="toc-skipped"></div>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>If (for some reason) you are using this as a guide for doing this yourself, you will need the following:</p>
+
+<h3 id="knowledge">Knowledge</h3>
+<ul>
+  <li><em>basic</em> Ubuntu Server and Linux</li>
+  <li><em>basic</em> Docker, Docker Compose</li>
+  <li><em>basic</em> Traefix Proxy</li>
+  <li><em>basic</em> DNS</li>
+</ul>
+
+<h3 id="resources">Resources</h3>
+<ul>
+  <li>Internet-Accessible Server*
+    <ul>
+      <li>Ubuntu 20.04 or newer</li>
+      <li>4GB of RAM or more</li>
+      <li>8GB of Storage or (preferably) more</li>
+    </ul>
+  </li>
+  <li>Domain Name
+    <ul>
+      <li>Ability to add DNS Records
+<em>Need a server? Get $100 in credit for 2 months through my <a href="https://m.do.co/c/2d2f25b376ae">DigitalOcean Referral Code</a>!</em></li>
+    </ul>
+  </li>
+</ul>
+:ET
