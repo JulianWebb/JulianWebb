@@ -1,7 +1,8 @@
 ---
 layout:     post
 title:      Setting up Synapse using <wbr>Docker&nbsp;Compose
-date:       2021-11-14 10:00"00
+cleanTitle: Setting up Synapse using Docker Compose
+date:       2021-11-14 10:00:00
 summary:    Setting up Matrix.org Synapse using Docker Compose and Traefik Proxy
 categories: Computer
 thumbnail: commenting
