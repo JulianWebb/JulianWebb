@@ -15,13 +15,9 @@ post_limit: 10
 # Social usernames/URLs
 twitter_username: Pongles_
 github_username:  JulianWebb
-instagram_username: 
-reddit_username: 
 linkedin_link: https://www.linkedin.com/in/julian-webb/
-google_plus_link:
-stackoverflow_link:
-xing_link:
-facebook_link:
+matrix_link: https://matrix.to/#/@julian:julianwebb.ca
+gopher_link: "gopher://julianwebb.ca/"
 
 # Footer
 footer_left: Goo goo g' joob

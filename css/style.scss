@@ -50,7 +50,8 @@ body {
 	color: $white;
 	font-size: 16px;
 	height: 100%;
-	width: 100%
+	width: 100%;
+	tab-size: 2;
 }
 
 a, a:active {
@@ -232,6 +233,11 @@ ul {
 	@media (min-width: $screen-sm-min) {
 		width: 700px;
 		max-width:700px;
+	}
+
+	@media (min-width: $screen-md-min) {
+		width: 1000px;
+		max-width: 1000px;
 	}
 
 	.header {
@@ -525,10 +531,10 @@ ul {
 			margin-left: 15%;
 		}
 
-		@media (min-width: $screen-lg-min) {
-			width: 50%;
-			margin-left: 25%;
-		}
+		// @media (min-width: $screen-lg-min) {
+		// 	width: 50%;
+		// 	margin-left: 25%;
+		// }
 
 		.thumb {
 			margin-top: 20px;
@@ -680,7 +686,7 @@ ul {
 
 				code {
 					font-family: 'Anonymous Pro';
-					font-size: 15px;
+					// font-size: 15px;
 					background-color: $darker;
 					color: $white;
 					padding: 0.5em;
@@ -924,4 +930,14 @@ td{
 	li {
 		margin-left: 1em;
 	}
+}
+
+.image-caption {
+	max-width: 100%;
+	padding: 10px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	font-size: 75%;
 }
