@@ -257,13 +257,13 @@ services:
     depends_on:
       - "postgres"
     labels:
-		  - "traefik.http.services.synapse.loadbalancer.server.port=8008"
-		  - "traefik.http.routers.synapseServer.rule=Host(`example.org`)"
-			- "traefik.http.routers.synapseServer.entrypoints=matrixSecure"
-			- "traefik.http.routers.synapseServer.service=synapse"
-		  - "traefik.http.routers.synapseClient.rule=Host(`example.org`)"
-			- "traefik.http.routers.synapseClient.entrypoints=webSecure"
-			- "traefik.http.routers.synapseClient.service=synapse"
+      - "traefik.http.services.synapse.loadbalancer.server.port=8008"
+      - "traefik.http.routers.synapseServer.rule=Host(`example.org`)"
+      - "traefik.http.routers.synapseServer.entrypoints=matrixSecure"
+      - "traefik.http.routers.synapseServer.service=synapse"
+      - "traefik.http.routers.synapseClient.rule=Host(`example.org`)"
+      - "traefik.http.routers.synapseClient.entrypoints=webSecure"
+      - "traefik.http.routers.synapseClient.service=synapse"
   postgres:
     image: "postgres:14"
     container_name: "yournamingscheme-postgres"
