@@ -3,6 +3,7 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,400,300,700);
 @import url(https://fonts.googleapis.com/css?family=Montserrat);
 @import url(https://fonts.googleapis.com/css?family=Anonymous+Pro:400,700);
+@import url('https://cdn.rawgit.com/lonekorean/gist-syntax-themes/d49b91b3/stylesheets/one-dark.css');
 
 /* Colours */
 $twitter:        #6dabda;
@@ -932,12 +933,32 @@ td{
 	}
 }
 
-.image-caption {
+.article-image-wrapper img.article-image {
+	padding-bottom: 0 !important;
+}
+
+.article-image-caption {
 	max-width: 100%;
-	padding: 10px;
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+	padding: 0;
 	text-align: center;
 	font-size: 75%;
+	font-style: oblique;
+}
+
+.gist-file {
+	border: none !important;
+	.git-data {
+		border: none !important;
+	}
+}
+
+td.blob-num {
+	border: none !important;
+}
+
+.gist-meta {
+	display: none;
 }

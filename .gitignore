@@ -23,7 +23,7 @@ Temporary Items
 
 # Jekyll Specific
 _site/
-.jekyll-cache
+.jekyll-cache/
 
 # Ruby
 Gemfile.lock
