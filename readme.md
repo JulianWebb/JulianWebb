@@ -1,3 +1,15 @@
-<img src="assets/wave.png" align="left" width="200"/> Welcome to my Github profile. Here you will see the 6 projects I've found decent enough to showcase, my spotty track record of commits, and a living list of public actions I've taken on the site. As you can see I mainly work in Javascript, though I have touched other languages like HTML, CSS, SQL, Python, Lua, etc. (which is not an exhaustive list of languages I've worked in, just the ones I have evidence of). I've also made contributions to various Documentation but that's mainly typo fixes. 
-<br clear="left" />
-I can't think of anything else to add here, so that's it! Hope you have a good day.
+Hello!
+
+My name is Julian Webb. I am a decent programmer and a work in progress artist.
+
+I mainly work with Javascript, but I also enjoy using other languages.
+
+My latest personal project is a gopher server I've called [Hadfield](https://github.com/julianwebb/hadfield).   
+I have a public instance of it running [here](gopher://julianwebb.ca).   
+[![julianwebb/hadfield - GitHub](https://gh-card.dev/repos/julianwebb/hadfield.svg?fullname=)](https://github.com/julianwebb/hadfield)
+
+I also have a [personal blog](https://julianwebb.ca) where I post stuff.
+
+If you need to contact me, you can do via [matrix](https://matrix.to/#/@julian:julianwebb.ca) or via [email](mailto:email@julianwebb.ca).
+
+Happy trails.
