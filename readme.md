@@ -23,7 +23,7 @@ I have a blog, I post things sometimes. Some of it might be worth reading.
 ## Contact
 If you want you can contact me using the following methods:
 
-![Email](/assets/mailBadge.svg)   
+[![Email](/assets/mailBadge.svg)](#)   
 [![Matrix](/assets/matrixBadge.svg)](https://matrix.to/#/@julian:julianwebb.ca)   
 [![Twitter](/assets/twitterBadge.svg)](https://twitter.com/Pongles_)
 
