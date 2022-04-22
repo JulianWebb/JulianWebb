@@ -1,19 +1,15 @@
-<!DOCTYPE html>
-<html>
-
-    {% include head.html %}
-
-    <body>
-
-    {% include header.html %}
-
-    <div class="page-content">
-      <div class="wrap">
-      {{ content }}
-      </div>
-    </div>
-
-    {% include footer.html %}
-
-    </body>
-</html>
+---
+layout: base
+---
+<header>
+	<a href="/">Posts by Julian Webb</a>
+	<hr />
+</header>
+<main>
+	{{ content }}
+</main>
+<footer>
+	<hr />
+	<span id="site-copy">&copy;{{ site.data.options.copyright }}-{{ "now" | date: "%Y" }} Julian Webb</span> |
+	<span id="back-to-top"><a href="#">Back to top</a></span>
+</footer>

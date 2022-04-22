@@ -1,18 +1,14 @@
 ---
-layout:     post
-title:      Setting up Synapse using <wbr>Docker&nbsp;Compose
-cleanTitle: Setting up Synapse using Docker Compose
-date:       2021-11-14 10:00:00
-summary:    Setting up Matrix.org Synapse using Docker Compose and Traefik Proxy
-categories: Computer
-thumbnail: commenting
+title: Setting up Synapse using Docker Compose
+category: sysadmin
 tags:
- - synapse
- - matrix
- - docker
- - docker compose
- - traefik
- - dns
+  - synapse
+  - matrix
+  - docker
+  - docker compose
+  - traefik
+  - dns
+postedOn: 2021-11-14
 ---
 In this post I'll outline the steps I took including setting up Synapse and what configuration I used. My install used simple username and password authentication and a 3rd party SMTP provider. I did not [set up a TURN server](https://matrix-org.github.io/synapse/latest/turn-howto.html) during my experience so that will not be included.
 
@@ -42,6 +38,7 @@ If *(for some reason)* you are using this as a guide for doing this yourself, yo
 	* [Docker Compose](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
 	* [Traefik](https://doc.traefik.io/traefik/getting-started/quick-start/#launch-traefik-with-the-docker-provider) with Docker Provider
 * Caffeine Delivery System *(optional)*
+
 
 <sup><sup>†</sup>Alternatives described in [Domain Set-up](#domain-set-up)   
 *Need a server? Get $100 in credit for 2 months through my [DigitalOcean Referral Code](https://m.do.co/c/2d2f25b376ae)!*   
@@ -97,7 +94,6 @@ In the working directory of your choice, create the following as `docker-compose
 
 ```yml
 version: "3.7"
-
 services:
   synapse:
     image: "matrixdotorg/synapse:latest"
@@ -174,7 +170,6 @@ Do note that for items like email and single-sign on, further configuration will
 Update your `docker-compose.yml` with configuration for postgres:
 ```yaml
 version: "3.7"
-
 services:
   synapse:
     image: "matrixdotorg/synapse:latest"
@@ -237,7 +232,6 @@ Make sure to stop and restart your Traefik instance for these changes to take ef
 Next, update your `docker-compose.yml` to the following:
 ```yml
 version: "3.7"
-
 services:
   synapse:
     image: "matrixdotorg/synapse:latest"

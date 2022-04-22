@@ -1,22 +1,18 @@
 ---
-layout:     post
-title:      "Building a Gopher Server: An Adventure"
-cleanTitle: "Building a Gopher Server: An Adventure"
-date:       2021-11-30 06:00:00
-summary:    My journey into Gopherspace
-categories: Computer
-thumbnail: chain
+title: "Building a Gopher Server: An Adventure"
+category: programming
 tags:
- - gopher
- - javascript
- - networking
+  - gopher
+  - javascript
+  - networking
+postedOn: 2021-11-30
+modifiedLast: 2022-04-21
 ---
-
 I've always had a bit of an interest in older technology, from growing up watching tapes and VCDs during the peak years of DVDs, learning BASIC and FORTRAN during my school days, spending most of my adolescence on IRC, to going straight from playing the Super Mario Brothers Trilogy on NES to playing Halo on the original Xbox, I've definitely found enjoyment in the older school.
 
 That's why, when in need of a portfolio piece, I decided on the idea of creating a Gopher server from scratch. For those that don't know, Gopher, named after the Minnesota state animal, is a pre-HTTP specification for a stateless distributed document search and retrival, originally meant for use at universities for low overhead sharing of information without needing to build a centralized store.
 
-{% include image.html image='/images/gopher/patrice-gopher.webp' alt='Fat Gopher Eating Something Orange' caption='Photo by <a href="https://www.pexels.com/@sunny67">Patrice Schoefolt</a>' %}
+{% include image.html image='/media/patrice-gopher.webp' alt='Fat Gopher Eating Something Orange' caption='Photo by <a href="https://www.pexels.com/@sunny67">Patrice Schoefolt</a>' %}
 
 Originally published in March of 1993 as [RFC1436](https://datatracker.ietf.org/doc/html/rfc1436), Gopher's protocol was designed to be simple and widely useable. If one really wanted, they likely could create a basic server implementation in a single file based on parsing and listing an existing directory.
 
@@ -42,15 +38,35 @@ If you've had experiences like I've had though, you'll have been burnt by offici
 
 To start I found a gopher client in Ubuntu's repositories, while I could just interact with my implementation via netcat, testing it against an actual client would probably help me make sure I am actually doing things right. For testing I made a simple server that just sends a static response to any request, since I plan to do the empty request for root listing.
 
-{% include gist.html gist='JulianWebb/577471721a5d6601e6e3881b27d479e3' %}
+```js
+const { createServer } = require('net');
+
+const menu = [
+	"0foobar\t/foobar\tlocalhost\t7000",
+	"0qinzuk\t/qinzuk\tlocalhost\t7000",
+	"1secret folder\t/secret\tlocalhost\t7000"
+]
+
+createServer(socket => {
+	socket.once('data', data => {
+		let message = menu.reduce((accumulator, current) => {
+			return accumulator + current + "\r\n";
+		}, "");
+		message += ".\r\n";
+		socket.write(message, () => {
+			socket.destroy();
+		})
+	})
+}).listen(7000);
+```
 
 Now to run `gopher localhost 7000` and see the results and... huh.
 
-{% include image.html image='/images/gopher/gopher-fail.png' alt='Terminal displaying error saying \'nothing available\'' caption='Well that can\'t be right' %}
+{% include image.html image='/media/gopher-fail.png' alt='Terminal displaying error saying \'nothing available\'' caption='Well that can\'t be right' %}
 
 Just to make sure it isn't programmer error, I'll try it with netcat and make sure it's replying with the correct message.
 
-{% include image.html image='/images/gopher/netcat-success.png' alt='Terminal displaying correct output' caption='Whew, I\'m not completely incompetent' %}
+{% include image.html image='/media/netcat-success.png' alt='Terminal displaying correct output' caption='Whew, I\'m not completely incompetent' %}
 
 ### So what's up with that?
 
@@ -68,7 +84,7 @@ It seems that the default `gopher` for Ubuntu is sending a Gopher+ command to th
 
 Instead I've found [Gophie](https://gophie.org/) which is a GUI gopher client that seems to actually work with the gopher protcol.
 
-{% include image.html image='/images/gopher/gophie-success.png' alt='It\'s a secret to everybody' caption='Step 1: Test the Protocol, Step 2: Create the rest of the gopher' %}
+{% include image.html image='/media/gophie-success.png' alt='It\'s a secret to everybody' caption='Step 1: Test the Protocol, Step 2: Create the rest of the gopher' %}
 
 ## For Real Now
 
@@ -95,12 +111,12 @@ I handle most of the logic in the Catalogue class. The Catalogue is what parses 
 
 ## The Result
 
-If you'd like to check my work, I do have it hosted on Github
-
-{% include repo.html name='julianwebb/hadfield' %}
+If you'd like to check my work, I do have it hosted on [Github](julianwebb/hadfield)
 
 I admit I didn't go into as much detail here as I could have, but considering that as of now, it's a minimum viable project, I doubt doing so would be very useful for very long. 
 
-That said, as minimumaly viable as it may be, it *is* usable. In fact you can access a Gopher version of [this site](gopher://julianwebb.ca/)!
+<del>That said, as minimally viable as it may be, it *is* usable. In fact you can access a Gopher version of this site!</del>
+
+<i>I used to have it running, but found it was limiting. Maybe I'll do it again in a later version</i>
 
 I look forward to working on it more, I think there is so much potential.
