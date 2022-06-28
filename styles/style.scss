@@ -1,0 +1,259 @@
+$full-width: 1536px;
+$mid-width: 1024px;
+
+
+
+$article-width: 1024px;
+$padding-width: 1em;
+$aside-width: 512px;
+$page-width: calc($article-width + $aside-width + ($padding-width * 2));
+
+:root {
+	--background-primary: #222;
+	--background-secondary: #333;
+	--font-primary: #DDD;
+
+	@media (prefers-color-scheme: light) {
+		--background-primary: #EEE;
+		--background-secondary: #DDD;
+		--font-primary: #222;
+	}
+
+	@media (min-width: $full-width) {
+		--article-width: 1024px;
+		--aside-width: 512px;
+	}
+
+	@media (min-width: $mid-width) and (max-width: $full-width) {
+		--article-width: 1024px;
+		--aside-width: 0px;
+	}
+
+	@media (max-width: $mid-width) {
+		--article-width: auto;
+		--aside-width: 0px;
+	}
+
+	--page-width: calc(var(--article-width) + var(--aside-width));
+
+}
+
+
+a {
+	color: var(--font-primary);
+
+	&.off {
+		font-weight: bold;
+	}
+}
+
+body {
+	font-family: sans-serif;
+	color: var(--font-primary);
+	background-color: var(--background-primary);
+	// width: fit-content;
+	// padding: 1em;
+
+	header {
+		width: var(--article-width);
+		margin: 1em;
+		padding: 1em;
+		text-align: center;
+
+		#page-title {
+			font-size: 200%;
+			font-weight: bold;
+
+			#page-subtitle {
+				font-size: 75%;
+				font-weight: normal;
+			}
+		}
+
+		nav {
+			font-style: italic;
+			text-align: left;
+			
+		}
+	}
+
+	footer {
+		width: var(--article-width);
+		background-color: var(--background-secondary);
+		margin: 1em;
+		padding: 1em;
+		text-align: center;
+
+		div {
+			display: inline-block;
+			padding: 0 1em;
+		}
+	}
+	main {
+		width: var(--page-width);
+		margin: 1em;
+
+		section {
+			margin-bottom: 1em;
+			
+			h3 {
+				font-size: 1.5em;
+			}
+			
+			h4 {
+				font-size: 1.25em;
+			}
+
+			h5 {
+				font-size: 1.125em;
+				margin: 0;
+			}
+			
+			> div, > p {
+				width: calc(var(--article-width) - 2em);
+				padding: 0.5em;
+				display: inline-block;
+
+				ul {
+					margin-top: 0;
+				}
+
+				> code {
+					font-size: 1.25em;
+					background-color: inherit;
+				}
+
+				pre.codebox {
+					width: calc(var(--article-width) - 4em);
+					margin: auto;
+					padding: 1em;
+					background-color: var(--background-secondary);
+					
+					code {
+						padding: 1em;
+						overflow-x: scroll;
+
+						td.hljs-ln-line.hljs-ln-code {
+							padding-left: 1em;
+						}
+					}
+
+					img {
+						margin: 0 auto;
+					}
+
+					p {
+						text-align: center;
+					}
+				}
+			}
+
+			aside {
+				
+				background-color: var(--background-secondary);
+				
+				@media (min-width: $full-width) {
+					float: right;
+					width: var(--aside-width);
+					display: inline;
+				}
+
+				@media (max-width: $full-width) {
+					width: calc(var(--article-width) - 4em);
+				}
+				margin: 0 1em 1em 1em;
+				padding: 1em;
+				padding-bottom: 0.5em;
+				font-style: italic;
+
+				sup {
+					font-style: normal;
+				}
+
+				p {
+					margin-bottom: 0.5em;
+				}
+			}
+
+
+			#table-of-contents {
+				nav {
+					background-color: var(--background-secondary);
+					margin-left: 1em;
+					padding: 1em;
+					width: fit-content;
+					max-width: calc(var(--article-width) - 2em);
+
+
+					div {
+						font-weight: bold;
+						font-size: 1.5em;
+						padding: 0;
+					}
+
+					ul {
+						margin: 0;
+						list-style: none;
+					}
+				}
+			}
+		}
+
+		section#article-header {
+			div#article-title {
+				font-size: 200%;
+				font-weight: bold;
+				text-align: center;
+				padding: 0;
+			}
+
+			div#article-subtitle {
+				font-size: 175%;
+				text-align: center;
+				padding: 0;
+			}
+
+
+			dl#article-info {
+				width: calc(var(--article-width) * 0.6);
+				margin: 1em auto auto auto;
+				padding: 0.5em;
+				background: var(--background-secondary);
+				display: grid; 
+				grid-template-columns: 1fr 1fr;
+				grid-template-rows: auto auto auto;
+				gap: 0 0.5em; 
+				grid-template-areas:
+				"published modified"
+				"category length"
+				"tag tag";
+		
+				dt {
+					font-weight: bold;
+					padding-right: 1em; 
+				}
+			
+				span {
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+					grid-template-rows: 1fr;
+					grid-auto-flow: column;
+					gap: 0.25em; 
+				}
+		
+				#article-tag {
+					grid-area: tag;
+					grid-template-columns: min-content auto;
+					
+					dd {
+						text-align: left;
+					}
+				}
+			}
+		}
+	}
+}
+
+// .hljs {
+// 	background-color: var(--background-secondary);
+// }
