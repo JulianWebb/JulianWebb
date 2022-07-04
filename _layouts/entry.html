@@ -11,8 +11,10 @@ layout: default
 				<dd>{{ page.publishedOn }}</dd>
 			</span>
 			<span role="none" id="article-modified">
+				{% if page.modifiedLast %}
 				<dt>Modified:</dt>
 				<dd>{{ page.modifiedLast }}</dd>
+				{% endif %}
 			</span>
 			<span role="none" id="article-category">
 				<dt>Category:</dt>
