@@ -1,0 +1,387 @@
+---
+layout: entry
+title: "Synapse v1.60.0 Setup"
+subtitle: "with Docker Compose v2 and Traefik Proxy v2"
+description: "How to set up a Synapse Homeserver using Docker Compose and Traefik"
+publishedOn: 2021-11-14
+modifiedLast: 2022-06-24
+tags:
+  - "Synapse"
+  - "Matrix"
+  - "Docker"
+  - "Docker Compose"
+  - "Traefik"
+  - "Traefik Proxy"
+  - "DNS"
+  - "Let's Encrypt"
+  - "Postgres"
+category: "sysadmin"
+length: "10 Minutes"
+---
+<section>
+	<p>In this entry, I'll outline the steps I took setting up Synapse v1.60.0, including the configuration I used. For my install, I used simple Username/Password authentication and a 3rd party SMTP provider. I did not <a href="https://matrix-org.github.io/synapse/latest/turn-howto.html" target="_blank" class="off">up a TURN server</a>, so of course information on that will not be included.</p>
+
+	<p>As Docker Compose has feature parity with the Docker CLI commands, Docker Compose is not strictly needed. However, conversion from Docker Compose YAML to Docker CLI is an exercise left to the reader. </p>
+</section>
+<section>
+	<div id="table-of-contents">
+		<nav>
+			<div>Table of Contents</div>
+			<ul>
+				<li><a href="#prerequisites">Prerequisites</a></li>
+				<ul>
+					<li><a href="#knowledge">Knowledge</a></li>
+					<li><a href="#resources">Resources</a></li>
+				</ul>
+				<li><a href="#instructions">Instructions</a></li>
+				<ul>
+					<li><a href="#domain-preparation">Preparing Your Domain</a></li>
+					<li><a href="#synapse-configuration">Generating Synapse Configuration</a></li>
+					<li><a href="#editing-homeserver">Editing homeserver.yml</a></li>
+					<li><a href="#postgres-service">Postgres Service Set-up</a></li>
+					<li><a href="#first-user">Creating Your First User</a></li>
+					<li><a href="#configuring-traefik">Configuring Traefik</a></li>
+				</ul>
+				<li><a href="#conclusion">Conclusion</a></li>
+				<li><a href="#further-reading">Further Reading</a></li>
+			</ul>
+		</nav>
+	</div>
+</section>
+<section>
+	<h3 id="prerequisites">Prerequisites</h3>
+	<p>If, for some reason, you are using this as a guide for doing this yourself, you will need the following:</p>
+	<h4 id="knowledge">Knowledge</h4>
+	<div>
+		<ul>
+			<li>
+				<div>Basic understanding of Linux and Ubuntu Server</div>
+				<div>(e.g. if you can work your way through <a href="https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-22-04" class="off">this tutorial</a>, you're good)</div>
+			</li>
+			<li>
+				<div>Basic understanding of Docker and Docker Compose</div>
+				<div>(e.g. if you can work your way through <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-22-04" class="off">this tutorial</a>, you're good)</div>
+			</li>
+			<li>
+				<div>Basic understanding of Traefik Proxy and it's Docker Provider</div>
+				<div>(e.g. if you can work your way through the <a href=https://doc.traefik.io/traefik/getting-started/quick-start/" class="off">Quick Start</a>, you're good)</div>
+			</li>
+		</ul>
+</div>
+<aside>
+	<p>Get $100 in credit for 2 months on DigitalOcean through my <a href="https://m.do.co/c/2d2f25b376ae" class="off">Referral Code</a>!</p>
+	<p>Get $5 off your first domain from Name.com through my <a href="https://www.name.com/referral/302312" class="off">Referral Code</a>!</p>
+</aside>
+<h4>Resources</h4>
+<div>
+	<ul>
+		<li>Publicly Accessible Server</li>
+		<ul>
+			<li>Ubuntu 20.04 or <i>newer</i></li>
+			<li>4 GB of RAM <i>minimum</i></li>
+			<li>8 GB of Storage <i>minimum</i></li>
+			<li>SSH or Direct Terminal Access</li>
+			<li>Super User Privileges</li>
+			<li>Ports <code>443</code> and <code>8448</code> free<sup>†</sup></li>
+		</ul>
+		<li>Registered Domain Name</li>
+		<li>Applications and Services</li>
+		<ul>
+			<li><a href="https://www.docker.com/" class="off">Docker</a> v3.6+</li>
+			<li><a href="https://docs.docker.com/compose/install/" class="off">Docker Compose</a> v2</li>
+			<li><a href="https://doc.traefik.io/traefik/" class="off">Traefik Proxy</a> v2 with Docker Provider</li>
+		</ul>
+	</ul>
+</div>
+<aside>
+	<p><sup>†</sup>Alternative methods not using those ports will be mentioned in the <a href="#domain-preparation">domain preparation</a> section below.</p>
+</aside>
+</section>
+<section>
+	<h3 id="instructions">Instructions</h3>
+	<h4 id="domain-preparation">Preparing Your Domain</h4>
+	<p>As one of the first steps of setting up Synapse involves informing it of the domain being used, it makes sense to talk about it first.</p>
+	<p>With Matrix, the domain (aka “server name”), is used as an identifier for the Synapse server (aka “homeserver”) and local users for all interactions with other homeservers and the users on them. Currently, changing the domain name of a homeserver is tantamount to creating a completely new homeserver; there is a <a href="https://github.com/matrix-org/matrix-spec-proposals/blob/neilalexander/identities/proposals/2787-portable-identities.md" class="off"></a>proposal for Portable Identities which may help in the future, but for now it's best to choose your server name wisely.</p>
+	<p>The way the server name is utilized for users is similar to the purpose of the discriminator you would find under your username on Discord, namely to avoid collisions between names (granted, Discord itself just uses each user's snowflake to identify them in actuality, but that's a different topic). If every username had to be unique, we'd have to content with <code>xXx_Bobbert_xXx</code>, <code>Shelia1960</code>, and <code>JeffTheOverlyLongDescriptiveName</code>. 
+	<aside>
+		Given that the server name is representative of your organization. it is recommend to remove any extraneous or redundant sub-domains it. For example, <code>@neo:zion.city</code> would be a better choice than <code>@neo:chat.zion.city</code>.
+	</aside>
+	<p>Instead Matrix takes advantage of the fact that each domain can only be registered by a single entity at a time. This also has the advantage of adding a quick way to see what organization a user is associated with, e.g. <code>@jake:state.farm</code>, <code>@bear:big.blue.house</code>, or <code>@geralt:riv.ia</code>.</p>
+	<p>With all that out of the way, let's continue.</p>
+	<p>Matrix utilizes <code>TLS/HTTPS</code> for it's <code>client</code><-><code>server</code> and <code>server</code><-><code>server</code> communications, the former using the regular port of <code>443</code> and the latter <code>Synapse</code>, by default, listens on port <code>8008</code> for both client and server HTTP communications. This (intentional) discrepacy will be solved later by routing the communication through a reverse proxy (in this case, Traefik).</p>
+	<p>If reserving port <code>443</code> (or <code>8448</code>) on your choosen domain for Synapse is an issue, e.g. you also serve a website, there are alternative methods avaliable to you that still let you use it as your server name.</p>
+	<p>One method is to use your reverse proxy to <a href="https://matrix-org.github.io/synapse/latest/reverse_proxy.html" class="off">set certain routes</a> to be handled by Synapse. Allowing everything but <code>/_matrix</code> and <code>/_synapse/client</code> to be fullfiled by other services. This is the easiest option, especially if your services are all handled by the same reverse proxy.</p>
+	<p>On the other hand, if your situation doesn't allow that. You can also <a href="https://matrix-org.github.io/synapse/latest/delegate.html" class="off">delgate a connection</a> to another domain or port by using a <code>.well-known</code> configuration file on your public server name pointed towards your <code>URI</code> of choice, or create a SRV DNS record allowing server discovery.</p>
+	<p>Once you've made sure to your domain is correctly pointed to the right place and any required delgation is done, it's on to the next step.</p>
+</section>
+<section>
+	<h4 id="synapse-configuration">Generating Synapse Configuration</h4>
+	<p>In a working directory of your choice, create the file <code>docker-compose.yml</code> and transcribe the following YAML:</p>
+	<aside><p>Personally I keep all my docker configurations in seperate directories under <code>/docker/</code> but it is largely up to your organization's preferences.</p></aside>
+	{% capture code %}version: "3.7"
+
+services:
+  synapse:
+    image: matrixdotorg/synapse:v1.60.0
+    container_name: ${SYNAPSE_CONTAINER_NAME}
+    environment:
+      - SYNAPSE_SERVER_NAME
+      - SYNAPSE_REPORT_STATS
+      - UID
+      - GID
+      - TZ
+    volumes:
+      - "/synapse:/data:rw"
+    restart: "unless-stopped"
+    ulimits:
+      nofile:
+        soft: 131072
+        hard: 131072{% endcapture %}
+	{% include figure.html type="code" lang="yaml" code=code caption="docker-compose.yml" %}
+	<p>Due to the design of Synpase, the default nofile ulimits of 1024 cause noticeable issues. Increasing it to a high enough value (2^17 in this case) will resolve those issues.</p>
+	<p>Then, to set the environment variables, create the file .env in the same directory and populate it with the following information:</p>
+	<div><ul>
+		<li><code>SYNAPSE_CONTAINER_NAME</code>: The hostname of the container</li>
+		<li><code>SYNAPSE_SERVER_NAME</code>: The domain/server name for your homeserver</li>
+		<li><code>SYNAPSE_REPORT_STATS</code>: Report anonymous stats to the Synpase developers (<code>yes</code>/<code>no</code>)</li>
+		<li><code>UID</code>/<code>GID</code>: The User/Group ID of the owner of the data directory</li>
+		<li><code>TZ</code> Which Time Zone to use for timestamps and other time-related functions</li>
+	</ul></div>
+	<aside>
+		<p>To make editing the configuration easier, it's suggested to use the same <code>UID</code>/<code>GID</code> as the host user, which you can find with the id command.</p>
+		<p>You can find the right name for your Time Zone in <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" class="off">this list</a>.</p>
+	</aside>
+	<p>An example of a completed <code>.env</code> is as follows:</p>
+	{% capture code %}SYNAPSE_CONTAINER_NAME=exampleorg-synapse
+SYNAPSE_SERVER_NAME=example.org
+SYNAPSE_REPORT_STATS=yes
+UID=1000
+GID=1000
+TZ=America/Vancouver{% endcapture %}
+	{% include figure.html type="code" lang="ini" code=code caption=".env" %}
+	<p>Now run '<code>docker compose run synapse generate</code>' and you should get an output like so:</p>
+	{% capture code %}julian@server:/docker/synapse$ docker compose run synapse generate
+Setting ownership on /data to 1000:1000
+Creating log config /data/example.org.log.config
+Generating config file /data/homeserver.yaml
+Generating signing key file /data/example.org.signing.key
+A config file has been generated in '/data/homeserver.yaml' for server name 'example.org'. Please review this file and customise it to your needs.{% endcapture %}
+	{% include figure.html type="code" lang="plaintext" code=code caption="command output" %}
+	<p>Once it's complete, <code>/synapse</code> should have appeared in the working directory and within it the file needed for the next section.</p>
+</section>
+<section>
+	<h4 id="editing-homeserver">Editing homeserver.yml</h4>
+	<p>Opening ./synapse/homeserver.yml, you will see that the generated configuration is several thousand lines. Now, before the panic surrounding the idea of having to set thousands of variables kicks in, you should be able to see that the majority of the file is actually comments, meant to explain each section in detail, whew.</p>
+	<p>While I highly recommend reading through the configuration so you can learn how to fine tune the install to your needs, you only need to focus on a few sections to get a basic homeserver up and running.</p>
+	<h5>Database Configuration</h5>
+	<p>By default, Synapse uses an embedded SQLite driver for it's database, this is fine for development and small, unfederated use cases but quickly becomes constranting when you want to join the main fediverse. This is why we'll need to configure a connection to a Postgres database (that we'll focus on setting up later) here.</p>
+	<p>In <code>homeserver.yaml</code> find the section labelled with the comment <code>## Database ##</code> within it, there should be already be configuration that looks like the following:</p>
+	{% capture code %}database:
+  name: sqlite3
+  args:
+    database: /data/homeserver.db{% endcapture %}
+	{% include figure.html type="code" lang="yaml" code=code caption="homeserver.yaml" %}
+	<p>Remove it and replace it with the following:</p>
+	{% capture code %}database:
+  name: psycopg2
+  args:
+    user: synapse
+    password: SuperSecurePassword
+    host: exampleorg-postgres
+    cp_min: 5
+    cp_max: 10{% endcapture %}
+	{% include figure.html type="code" lang="yaml" code=code caption="homeserver.yaml" %}
+	<p>Make sure to generate a properly secure password to replace <code>SuperSecurePassword</code> and rename the hostname in line with how you named the Synapse container.</p>
+	<aside>Please, please, <b>please</b> don't actually use <code>SuperSecurePassword</code> as the password.</aside>
+	<p>Make sure to keep track of these values as they'll be required later when setting up the Postgres container.</p>
+	<h5>Registration Configuration</h5>
+	<p>When it comes to Registration/Authentication, Synapse really gives you <i>>all</i> the options. From simple usernames and passwords to SSO or oAuth, trying to cover all the options in here would take more space than the rest of this documention combined. Good thing the Synapse Developers already wrote all about that stuff in the <a href="https://matrix-org.github.io/synapse/latest/usage/configuration/user_authentication/index.html" class="off">official documentation</a>.</p>
+	<aside>No these sections on Synapse configuration aren't just a shallow regurgitation of the documentation, why do you ask?</aside>
+	<p>All I can really say in this section is that if you want the absolute bare bones way to let people register, find the <code>enable_registration</code> and <code>enable_registration_without_verification</code> key and set them to true, but don't do that for real.</p>
+	<aside><b>Don't</b>.</aside>
+	<p>Instead you should look into how you want your organzation's users to sign up (or use alternative authentication) and figure out what validation methods you wish to use (e.g. email, captcha, ). Again, this is all too much to cover here, but that doesn't mean you shouldn't cover your bases.</p>
+</section>
+<section>
+	<h4 id="postgres-service">Postgres Service Set-up</h4>
+	<p>Now that we have Synapse configured, we next need the database. In the project's <code>docker-compose.yml</code> add the following section:
+	</p>
+	{% capture code %}  postgres:
+    image: postgres:14
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_INITDB_ARGS
+    volumes:
+    - "/postgres:/var/lib/postgres/data:rw"
+    restart: unless-stopped{% endcapture %}
+	{% include figure.html type="code" lang="yaml" code=code caption="docker-compose.yaml" startsFrom="22" %}
+	<p>as well, in the <code>synapse</code> service configuration, add the following property:</p>
+	{% capture code %}    depends_on: 
+      - postgres{% endcapture %}
+	{% include figure.html type="code" lang="yaml" code=code caption="docker-compose.yaml" startsFrom="20" %}
+	<p>The full <code>docker-compose.yml</code> should look like the following:</p>
+	{% capture code %}version: "3.7"
+
+services:
+  synapse:
+    image: matrixdotorg/synapse:v1.60.0
+    container_name: ${SYNAPSE_CONTAINER_NAME}
+    environment:
+      - SYNAPSE_SERVER_NAME
+      - SYNAPSE_REPORT_STATS
+      - UID
+      - GID
+      - TZ
+    volumes:
+      - "/synapse:/data:rw"
+    restart: "unless-stopped"
+    ulimits:
+      nofile:
+        soft: 131072
+        hard: 131072
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:14
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_INITDB_ARGS
+    volumes:
+      - "/postgres:/var/lib/postgres/data:rw"
+    restart: unless-stopped{% endcapture %}
+	{% include figure.html type="code" lang="yaml" code=code caption="docker-compose.yaml" %}
+	<p>Then in the same <code>.env</code> as earlier add the following properties:</p>
+	{% capture code %}POSTGRES_CONTAINER_NAME=exampleorg-postgres
+POSTGRES_USER=synapse
+POSTGRES_PASSWORD=SuperSecurePassword
+POSTGRES_INITDB_ARGS="--encoding=UTF8 --locale=C"{% endcapture %}
+	{% include figure.html type="code" lang="ini" code=code caption=".env" startsFrom="7" %}
+	<p>The first three properties should match the <code>host</code>, <code>user</code>, and <code>>password</code> set earlier in the Synapse configuration. The last one configures the database to the settings expected by Synapse.</p>
+	<p>The full <code>.env</code> should look like the following:</p>
+	{% capture code %}SYNAPSE_CONTAINER_NAME=exampleorg-synapse
+SYNAPSE_SERVER_NAME=example.org
+SYNAPSE_REPORT_STATS=yes
+UID=1000
+GID=1000
+TZ=America/Vancouver
+POSTGRES_CONTAINER_NAME=exampleorg-postgres
+POSTGRES_USER=synapse
+POSTGRES_PASSWORD=SuperSecurePassword
+POSTGRES_INITDB_ARGS="--encoding=UTF8 --locale=C"{% endcapture %}
+	{% include figure.html type="code" lang="ini" code=code caption=".env" %}
+	<p>That should be all the configuration needed for the database.</p>
+</section>
+<section>
+	<h4 id="first-user">Creating Your First User</h4>
+	<p>To create our user, first we need to have Synapse running, so a quick <code>docker compose up -d</code> then wait for the it to pull the images we need and start them.</p>
+	<p>Once started, running <code>docker compose exec synapse register_new_matrix_user -c /data/homeserver.yaml http://localhost:8008</code> will get you an interactive prompt to create a user.</p>
+	<p>It will ask for a new user localpart (username), a password, and if you should make the user an admin (in this case <code>yes</code>).</p>
+	<p>Once that's complete, you'll have your adminstrative user account, make sure you don't forget the username or password!</p>
+</section>
+<section>
+	<h4 id="configuring-traefik">Configuring Traefik</h4>
+	<p>Now for the part where we expose our homeserver to the world.</p>
+	<p>Make sure before following the rest that ports <code>443</code> and <code>8448</code> are being allowed through your firewall and accessible to Traefik.</p>
+	<h5>Entrypoints</h5>
+	<p>In the static configuration of Traefik, we'll need two EntryPoints for Synapse, one for each port, both configured as normal HTTP + TLS.</p>
+	{% capture code %}[entryPoints.matrixClient]
+	address = ":443"
+	[entryPoints.matrixClient.http.tls]
+		certResolver = "lets-encrypt"
+[entryPoints.matrixFederate]
+	address = ":8448"
+	[entryPoints.matrixFederate.http.tls]
+		certResolver = "lets-encrypt"{% endcapture %}
+	{% include figure.html type="code" lang="toml" code=code caption="traefik.toml" %}
+	<aside><p>If you don't already have Let's Encrypt set up in Traefik Proxy, read the <a href="https://doc.traefik.io/traefik/https/acme/" class="off">documentation</a> on it.</p></aside>
+	<p>Note, you don't have to name your entryPoints "<code>matrixClient</code>" and "<code>matrixFederated</code>" if that conflicts with other things. You just need to remember what they are.</p>
+	<p>Make sure to restart your Traefik instance for it to discover the new configuration.</p>
+	<h5>Routing Synapse</h5>
+	<p>Back in the <code>docker-compose.yml</code>, we now need to add some labels to our containers.</p>
+	<p>For the Synapse container we need to tell Traefik how to route it from the EntryPoints we defined above to the port that Synapse is listening to. In the Synapse service configuration add the following key and list:</p>
+	{% capture code %}    labels:
+      - "traefik.http.services.synapse.loadbalancer.server.port=8008"
+      - "traefik.http.routers.synapse.rule=Host(`example.org`)"
+      - "traefik.http.routers.synapse.entryPoints=matrixClient,matrixFederate"
+      - "traefik.http.routers.synapse.service=synapse"{% endcapture %}
+	{% include figure.html type="code" lang="yaml" code=code caption="docker-compose.yaml" startsFrom="22" %}
+	<aside><p>As always, change <code>example.org</code> to your domain.</p></aside>
+	<p>And in the Postgres service configuration add the following:</p>
+	{% capture code %}    labels:
+      - "traefik.enable=false"{% endcapture %}
+	{% include figure.html type="code" lang="yaml" code=code caption="docker-compose.yaml" startsFrom="37" %}
+	<p>This is to ensure that Traefik does not try to autodiscover any ports on container <code>postgres</code> and publish them.</p>
+	<p>Lastly, at the bottom of <code>docker-compose.yml</code> configure the containers to be on the same network as Traefik</p>
+	{% capture code %}networks:
+  default:
+    external: true
+    name: traefikNetworkHere{% endcapture %}
+	{% include figure.html type="code" lang="yaml" code=code caption="docker-compose.yaml" startsFrom="40" %}
+	<aside><p>You may have to recreate your containers to ensure they attach to the correct network</p></aside>
+	<p>All that being done, <code>docker-compose.yml</code> should look like the following:</p>
+	{% capture code %}version: "3.7"
+
+services:
+  synapse:
+    image: matrixdotorg/synapse:v1.60.0
+    container_name: ${SYNAPSE_CONTAINER_NAME}
+    environment:
+      - SYNAPSE_SERVER_NAME
+      - SYNAPSE_REPORT_STATS
+      - UID
+      - GID
+      - TZ
+    volumes:
+      - "/synapse:/data:rw"
+    restart: "unless-stopped"
+    ulimits:
+    nofile:
+	    soft: 131072
+	    hard: 131072
+    depends_on:
+      - postgres
+    labels:
+      - "traefik.http.services.synapse.loadbalancer.server.port=8008"
+      - "traefik.http.routers.synapse.rule=Host(`example.org`)"
+      - "traefik.http.routers.synapse.entryPoints=matrixClient,matrixFederate"
+      - "traefik.http.routers.synapse.service=synapse"
+  postgres:
+    image: postgres:14
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_INITDB_ARGS
+    volumes:
+      - "/postgres:/var/lib/postgres/data:rw"
+    restart: unless-stopped
+    labels:
+      - "traefik.enabled=false"
+
+networks:
+  default:
+    external: true
+    name: traefikNetworkHere{% endcapture %}
+	{% include figure.html type="code" lang="yaml" code=code caption="docker-compose.yaml" %}
+<p>And that should be it, restart your containers and Traefik should automatically discover them and get a certificate for your domain.</p>
+<p>All that's left to do is use a Matrix Client to connect to your homeserver and/or test your server's ability to federate with the <a href="https://federationtester.matrix.org/" class="off">Federation Tester</a>.</p>
+</section>
+<section>
+	<h3 id="conclusion">Conclusion</h3>
+	<p>Congrats! You should now have a basic Synapse install.</p>
+	<p>I highly recommend you read up on the <a href="https://matrix-org.github.io/synapse/latest/welcome_and_overview.html">documentation</a> and configure it to suit your organization's needs. Inital set-up like this is just the tip of the iceberg</p>
+</section>
+<section>
+	<h3 id="further-reading">Further Reading</h3>
+	<div>
+		<ul>
+			<li><a href="https://matrix-org.github.io/synapse/latest/welcome_and_overview.html" class="off">Synapse Documentation</a></li>
+			<li><a href="https://spec.matrix.org/v1.1/" class="off">Matrix Specification</a></li>
+			<li><a href="https://doc.traefik.io/traefik/" class="off">Traefik Documentation</a></li>
+			<li><a href="https://docs.docker.com/compose/" class="off">Docker Compose Manual</a></li>
+		</ul>
+	</div>
+</section>

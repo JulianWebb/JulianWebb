@@ -1,3 +1,6 @@
+---
+---
+
 $full-width: 1536px;
 $mid-width: 1024px;
 
@@ -123,11 +126,32 @@ body {
 					background-color: inherit;
 				}
 
+			
+			}
+
+			figure {
+				width: calc(var(--article-width) - 2em);
+				padding: 0.5em;
+				display: inline-block;
+				background-color: var(--background-secondary);
+
+				figcaption {
+					text-align: center;
+					font-style: italic;
+				}
+
+				img {
+					max-width: calc(var(--article-width) * 0.75);
+					margin: 0 auto;
+					padding-top: 1em;
+				}
+
 				pre.codebox {
 					width: calc(var(--article-width) - 4em);
 					margin: auto;
-					padding: 1em;
+					padding: 0 1em;
 					background-color: var(--background-secondary);
+					tab-size: 2;
 					
 					code {
 						padding: 1em;

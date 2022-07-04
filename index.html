@@ -1,57 +1,26 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Julian Webb</title>
-		<link rel="stylesheet" href="/styles/felipec.min.css">
-		<link href="/styles/reset.css" rel="stylesheet" />
-		<link href="/styles/style.css" rel="stylesheet" />
-		<link rel="apple-touch-icon" sizes="180x180" href="/media/icons/apple-touch-icon.png?v=1">
-		<link rel="icon" type="image/png" sizes="32x32" href="/media/icons/favicon-32x32.png?v=1">
-		<link rel="manifest" href="/media/icons/site.webmanifest?v=1">
-		<link rel="mask-icon" href="/media/icons/safari-pinned-tab.svg?v=1" color="#603cba">
-		<link rel="shortcut icon" href="/media/icons/favicon.ico?v=1">
-		<meta name="msapplication-TileColor" content="#603cba">
-		<meta name="msapplication-config" content="/media/icons/browserconfig.xml?v=1">
-		<meta name="theme-color" content="#603cba">
-
-		<meta property="og:description" content="Entries by Julian Webb" />
-		<meta property="og:type" content="website" />
-		<meta property="og:site_name" content="Julian Webb" />
-
-		<script src="/scripts/highlight.min.js"></script>
-		<script src="/scripts/highlightjs-line-numbers.min.js"></script>
-		<script>
-			hljs.highlightAll();
-			hljs.initLineNumbersOnLoad();
-			</script>
-		<meta charset="utf-8" />
-  	<meta name="viewport" content="width=device-width, inital-scale=1.0" />
-		</head>
-		<body>
-			<header id="page-header">
-				<div id="page-title">Entries <span id="page-subtitle">by Julian Webb</span></div>
-				<hr />
-			</header>
-			<main>
-				<section>
-					<h3>Welcome</h3>
-					<p>The following are entries written by me.</p>
-				</section>
-				<section>
-					<h4>Entries</h4>
-					<h5>System Admin</h5>
-					<div><ul>
-						<li>2021-11-14* - <a href="https://julianwebb.ca/entries/synapse-docker-compose.html">Synapse v1.60.0 Setup with Docker Compose v2 and Traefik Proxy</a></li>
-					</ul></div>
-					<h5>System Admin</h5>
-					<div><ul>
-						<li>2021-11-30* - <a href="https://julianwebb.ca/entries/gopher-hadfield.html">Building a Gopher Server: An Adventure</a></li>
-					</ul></div>
-				</section>
-			</main>
-			<footer>
-				<div>&copy; Julian Webb</div>|
-				<div>Back to <a href="#">top</a>.</div>
-			</footer>
-		</body>
-</html>
+---
+layout: default
+---
+<section>
+	<h3>Welcome</h3>
+	<p>Hello, I am Julian Webb. I try to make things, and I try to document them here.</p>
+</section>
+<section>
+	<h4>Entries</h4>
+	{% for category in site.data.categories.categories %}
+	{% assign exists = site.entries | find: "category", category.slug %}
+	{% if exists %}
+	<h5>{{ category.clean }}</h5>
+	<div id="{{ category.slug }}-entries">
+		{% assign entries = site.entries | where: "category", category.slug | sort: "publishedOn" %}
+		<ul>
+			{% for entry in entries %}
+			{% capture entryDate %}{{ entry.publishedOn }}{% if entry.modifiedLast %}*{% endif %}{% endcapture %}
+			{% capture entryTitle %}{{ entry.title }}: {{ entry.subtitle}}{% endcapture %}
+			<li>{{ entryDate }} - <a href="{{entry.url}}">{{ entryTitle }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+	{% endif %}
+	{% endfor %}
+</section>

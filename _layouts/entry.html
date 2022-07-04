@@ -1,0 +1,32 @@
+---
+layout: default
+---
+<section id="article-header">
+	<div id="article-title">{{ page.title }}:</div>
+	<div id="article-subtitle"> {{page.subtitle}}</div>
+	<div id="article-info">
+		<dl id="article-info">
+			<span role="none" id="article-published">
+				<dt>Published:</dt>
+				<dd>{{ page.publishedOn }}</dd>
+			</span>
+			<span role="none" id="article-modified">
+				<dt>Modified:</dt>
+				<dd>{{ page.modifiedLast }}</dd>
+			</span>
+			<span role="none" id="article-category">
+				<dt>Category:</dt>
+				<dd>{{ page.category }}</dd>
+			</span>
+			<span role="none" id="article-length">
+				<dt>Length:</dt>
+				<dd>≥{{ page.length }}</dd>
+			</span>
+			<span role="none" id="article-tag">
+				<dt>Tags:</dt>
+				<dd>{{ page.tags | array_to_sentence_string: '' }}</dd>
+			</span>
+		</dl>
+	</div>
+</section>
+{{ content }}
