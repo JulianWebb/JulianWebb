@@ -1,11 +1,11 @@
 ---
 layout: default
 ---
-<section>
+<section id="welcome">
 	<h3>Welcome</h3>
 	<p>Hello, I am Julian Webb. I try to make things, and I try to document them here.</p>
 </section>
-<section>
+<section id="entries">
 	<h4>Entries</h4>
 	{% for category in site.data.categories.categories %}
 	{% assign exists = site.entries | find: "category", category.slug %}
@@ -23,4 +23,18 @@ layout: default
 	</div>
 	{% endif %}
 	{% endfor %}
+</section>
+<section id="contact">
+	<h4>Contact</h4>
+	<p>You can find me in the following places:</p>
+	<table>
+		<tr>
+			<th>Email</th>
+			<td>email@[this.domain]</td>
+		</tr>
+		<tr>
+			<th>Github</th>
+			<td><a href="https://github.com/JulianWebb" class="off">https://github.com/JulianWebb</a></td>
+		</tr>
+	</table>
 </section>
