@@ -10,14 +10,12 @@ Most of my repositories here contain projects built using NodeJS and JavaScript,
 
 My latest project is [Hadfield](https://github.com/julianwebb/hadfield), a File-Based Gopher Server that I’ve written in, you guessed it, JavaScript. It aims to be a modern, specification-compliant Gopher Server that stays true to the spirit of the original scope.
 
-[<img src="https://card.julianwebb.ca/julianwebb/hadfield" />](//github.com/JulianWebb/Hadfield)
 
 ## Blog
 
 I have a blog, I post things sometimes. Some of it might be worth reading.
 
-[![Website](/assets/siteBadge.svg)](https://julianwebb.ca)   
-[![Gopherhole](/assets/gopherBadge.svg)](https://gopher.julianwebb.ca)
+[![Website](/assets/siteBadge.svg)](https://julianwebb.ca)
 
 
 ## Contact
