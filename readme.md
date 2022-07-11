@@ -8,8 +8,7 @@ I’ve been developing on and off for decades, ever since I first got access to 
 
 Most of my repositories here contain projects built using NodeJS and JavaScript, it really is a versatile tool. I do have experience with other languages however, such as Python, Ruby, Lua, PHP, FORTRAN, Basic, etc., it’s just so tempting to always fallback on JavaScript!
 
-My latest project is [Hadfield](https://github.com/julianwebb/hadfield), a File-Based Gopher Server that I’ve written in, you guessed it, JavaScript. It aims to be a modern, specification-compliant Gopher Server that stays true to the spirit of the original scope.
-
+My latest project is [xCBC](https:/xcbc.ca), a bodge to fix CBC's link previews on discord that I’ve written in, you guessed it, JavaScript. It aims to be a useful tool until CBC fixes the problem themselves.
 
 ## Blog
 
