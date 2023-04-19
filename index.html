@@ -6,23 +6,23 @@
   <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="shortcut icon" href="http://localhost/icons/favicon.ico" />
+<link rel="shortcut icon" href="http://julianwebb.ca/icons/favicon.ico" />
 <title>Julian Webb</title>
 <meta name="title" content="Julian Webb" />
 <meta name="description" content="Blog and Stuff for Julian Webb" />
-<meta name="keywords" content="" />
+<meta name="keywords" content="cbc,discord,docker,gopher,javascript,networking,nodejs,programming,traefik," />
 
 
 <meta property="og:title" content="" />
 <meta property="og:description" content="Blog and Stuff for Julian Webb" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="http://localhost/" /><meta property="og:image" content="http://localhost/images/share.png"/><meta property="og:site_name" content="Hugo ʕ•ᴥ•ʔ Bear" />
+<meta property="og:url" content="http://julianwebb.ca/" /><meta property="og:image" content="http://julianwebb.ca/images/share.png"/><meta property="og:site_name" content="Julian Webb" />
 
 
 
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://localhost/images/share.png"/>
+<meta name="twitter:image" content="http://julianwebb.ca/images/share.png"/>
 
 <meta name="twitter:title" content=""/>
 <meta name="twitter:description" content="Blog and Stuff for Julian Webb"/>
@@ -33,7 +33,7 @@
 <meta itemprop="description" content="Blog and Stuff for Julian Webb">
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
-  <link rel="alternate" type="application/rss+xml" href="http://localhost/index.xml" title="Julian Webb" />
+  <link rel="alternate" type="application/rss+xml" href="http://julianwebb.ca/index.xml" title="Julian Webb" />
   <style>
   body {
     font-family: Verdana, sans-serif;
@@ -274,6 +274,45 @@
 
     @media (prefers-color-scheme: light) {
         .project {
+            background: #c4c4c4;
+        }
+    }
+
+    .image {
+        display: grid;
+        grid-template:  "img" 1fr
+                        "caption" auto / 1fr auto;
+        padding: 1em;
+        background:#4e4e4e;
+        margin-bottom: 1em;
+    }
+
+    .image img {
+        grid-area: img;
+        margin: 0 auto;
+    }
+
+    .image figcaption {
+        grid-area:caption;
+        padding: 0.5em 0 0 0;
+        font-style: italic;
+        text-align: center; 
+    }
+
+    @media (prefers-color-scheme: light) {
+        .image {
+            background: #c4c4c4;
+        }
+    }
+
+    .aside {
+        padding: 1em;
+        background: #4e4e4e;
+        font-style: italic;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .aside {
             background: #c4c4c4;
         }
     }

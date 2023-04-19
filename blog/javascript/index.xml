@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>javascript on Julian Webb</title>
+    <link>http://julianwebb.ca/blog/javascript/</link>
+    <description>Recent content in javascript on Julian Webb</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-CA</language>
+    <copyright>Copyright © 2023, Julian Webb.</copyright>
+    <lastBuildDate>Tue, 30 Nov 2021 00:00:00 +0000</lastBuildDate><atom:link href="http://julianwebb.ca/blog/javascript/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Building a Gopher Server: An Adventure</title>
+      <link>http://julianwebb.ca/entries/gopher/</link>
+      <pubDate>Tue, 30 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>http://julianwebb.ca/entries/gopher/</guid>
+      <description>Building a Gopher Server: An Advenure Published: November 30th, 2021
+Updated: April 21th, 2022
+I&amp;rsquo;ve always had a bit of an interest in older technology, from growing up watching tapes and VCDs during the peak years of DVDs, learning BASIC and FORTRAN during my school days, spending most of my adolescence on IRC, to going straight from playing the Super Mario Brothers Trilogy on NES to playing Halo on the original Xbox, I&amp;rsquo;ve definitely found enjoyment in the older school.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>nodejs on Julian Webb</title>
+    <link>http://julianwebb.ca/blog/nodejs/</link>
+    <description>Recent content in nodejs on Julian Webb</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-CA</language>
+    <copyright>Copyright © 2023, Julian Webb.</copyright>
+    <lastBuildDate>Thu, 07 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://julianwebb.ca/blog/nodejs/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Building xCBC: a CBC to Discord Tool</title>
+      <link>http://julianwebb.ca/entries/xcbc/</link>
+      <pubDate>Thu, 07 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://julianwebb.ca/entries/xcbc/</guid>
+      <description>Building xCBC: a CBC to Discord Tool Published: June 7th, 2023
+For a while now, when linking to a CBC post on Discord, instead of generating a link preview using the Open Graph or Twitter meta tags, the link remains an undescriptive string that may hestiate to click on do to concerns around the trustworthiness and value of it.
+This, of course, leads to issues when you are in a community that likes to share news sources, if every other source has the preview, then CBC will be last choice to share.</description>
+    </item>
+    
+  </channel>
+</rss>

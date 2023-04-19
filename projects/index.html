@@ -5,7 +5,7 @@
   <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="shortcut icon" href="http://localhost/icons/favicon.ico" />
+<link rel="shortcut icon" href="http://julianwebb.ca/icons/favicon.ico" />
 <title>Projects | Julian Webb</title>
 <meta name="title" content="Projects" />
 <meta name="description" content="Projects This is the page where I list my completed projects:
@@ -17,15 +17,15 @@ xCBC Middle-man service to scrape CBC metadata for Discord preview. Project Home
 <meta property="og:description" content="Projects This is the page where I list my completed projects:
 xCBC Middle-man service to scrape CBC metadata for Discord preview. Project Homepage  Hadfield Gopher Server Hadfield is a Document-Based Gopher Server written in Javascript utilizing NodeJS. Project is in indefinite hiatus. Project Homepage" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://localhost/projects/" /><meta property="og:image" content="http://localhost/images/share.png"/><meta property="article:section" content="" />
+<meta property="og:url" content="http://julianwebb.ca/projects/" /><meta property="og:image" content="http://julianwebb.ca/images/share.png"/><meta property="article:section" content="" />
 
-<meta property="og:site_name" content="Hugo ʕ•ᴥ•ʔ Bear" />
+<meta property="og:site_name" content="Julian Webb" />
 
 
 
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://localhost/images/share.png"/>
+<meta name="twitter:image" content="http://julianwebb.ca/images/share.png"/>
 
 <meta name="twitter:title" content="Projects"/>
 <meta name="twitter:description" content="Projects This is the page where I list my completed projects:
@@ -37,7 +37,7 @@ xCBC Middle-man service to scrape CBC metadata for Discord preview. Project Home
 <meta itemprop="description" content="Projects This is the page where I list my completed projects:
 xCBC Middle-man service to scrape CBC metadata for Discord preview. Project Homepage  Hadfield Gopher Server Hadfield is a Document-Based Gopher Server written in Javascript utilizing NodeJS. Project is in indefinite hiatus. Project Homepage">
 
-<meta itemprop="wordCount" content="44"><meta itemprop="image" content="http://localhost/images/share.png"/>
+<meta itemprop="wordCount" content="44"><meta itemprop="image" content="http://julianwebb.ca/images/share.png"/>
 <meta itemprop="keywords" content="" />
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
@@ -281,6 +281,45 @@ xCBC Middle-man service to scrape CBC metadata for Discord preview. Project Home
 
     @media (prefers-color-scheme: light) {
         .project {
+            background: #c4c4c4;
+        }
+    }
+
+    .image {
+        display: grid;
+        grid-template:  "img" 1fr
+                        "caption" auto / 1fr auto;
+        padding: 1em;
+        background:#4e4e4e;
+        margin-bottom: 1em;
+    }
+
+    .image img {
+        grid-area: img;
+        margin: 0 auto;
+    }
+
+    .image figcaption {
+        grid-area:caption;
+        padding: 0.5em 0 0 0;
+        font-style: italic;
+        text-align: center; 
+    }
+
+    @media (prefers-color-scheme: light) {
+        .image {
+            background: #c4c4c4;
+        }
+    }
+
+    .aside {
+        padding: 1em;
+        background: #4e4e4e;
+        font-style: italic;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .aside {
             background: #c4c4c4;
         }
     }

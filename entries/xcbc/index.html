@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+
+<head>
+  <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="http://julianwebb.ca/icons/favicon.ico" />
+<title>Building xCBC: a CBC to Discord Tool | Julian Webb</title>
+<meta name="title" content="Building xCBC: a CBC to Discord Tool" />
+<meta name="description" content="Fixing the meta problem externally" />
+<meta name="keywords" content="cbc,discord,nodejs,docker,traefik,programming," />
+
+
+<meta property="og:title" content="Building xCBC: a CBC to Discord Tool" />
+<meta property="og:description" content="Fixing the meta problem externally" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://julianwebb.ca/entries/xcbc/" /><meta property="og:image" content="http://julianwebb.ca/images/share.png"/><meta property="article:section" content="entries" />
+<meta property="article:published_time" content="2022-07-07T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-07-07T00:00:00+00:00" /><meta property="og:site_name" content="Julian Webb" />
+
+
+
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://julianwebb.ca/images/share.png"/>
+
+<meta name="twitter:title" content="Building xCBC: a CBC to Discord Tool"/>
+<meta name="twitter:description" content="Fixing the meta problem externally"/>
+
+
+
+<meta itemprop="name" content="Building xCBC: a CBC to Discord Tool">
+<meta itemprop="description" content="Fixing the meta problem externally"><meta itemprop="datePublished" content="2022-07-07T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-07-07T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1298"><meta itemprop="image" content="http://julianwebb.ca/images/share.png"/>
+<meta itemprop="keywords" content="cbc,discord,nodejs,docker,traefik,programming," />
+<meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <style>
+  body {
+    font-family: Verdana, sans-serif;
+    margin: auto;
+    padding: 20px;
+    max-width: 720px;
+    text-align: left;
+    background-color: #fff;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.5;
+    color: #444;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  strong,
+  b {
+    color: #222;
+  }
+
+  a {
+    color: #3273dc;
+     
+  }
+
+  .title {
+    text-decoration: none;
+    border: 0;
+  }
+
+  .title span {
+    font-weight: 400;
+  }
+
+  nav a {
+    margin-right: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  input {
+    font-size: 16px;
+  }
+
+  content {
+    line-height: 1.6;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  code {
+    padding: 2px 5px;
+    background-color: #f2f2f2;
+  }
+
+  pre code {
+    color: #222;
+    display: block;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 14px;
+    overflow-x: auto;
+  }
+
+  div.highlight pre {
+    background-color: initial;
+    color: initial;
+  }
+
+  div.highlight code {
+    background-color: unset;
+    color: unset;
+  }
+
+  blockquote {
+    border-left: 1px solid #999;
+    color: #222;
+    padding-left: 20px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 25px;
+    text-align: center;
+  }
+
+  .helptext {
+    color: #777;
+    font-size: small;
+  }
+
+  .errorlist {
+    color: #eba613;
+    font-size: small;
+  }
+
+   
+  ul.blog-posts {
+    list-style-type: none;
+    padding: unset;
+  }
+
+  ul.blog-posts li {
+    display: flex;
+  }
+
+  ul.blog-posts li span {
+    flex: 0 0 130px;
+  }
+
+  ul.blog-posts li a:visited {
+    color: #8b6fcb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #333;
+      color: #ddd;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    strong,
+    b {
+      color: #eee;
+    }
+
+    a {
+      color: #8cc2dd;
+    }
+
+    code {
+      background-color: #777;
+    }
+
+    pre code {
+      color: #ddd;
+    }
+
+    blockquote {
+      color: #ccc;
+    }
+
+    textarea,
+    input {
+      background-color: #252525;
+      color: #ddd;
+    }
+
+    .helptext {
+      color: #aaa;
+    }
+  }
+
+</style>
+<style type="text/css">
+    .certification {
+        display: grid;
+        grid-template:  "img head" auto
+                        "img info" 1fr / 20% 1fr;
+        padding: 1em;
+        background:#4e4e4e;
+        margin-bottom: 1em;
+    }
+
+    .certification .cert-img {
+        grid-area: img;
+    }
+
+    .certification .cert-title {
+        grid-area: head;
+        font-size: x-large;
+        font-weight: bold;
+        padding: 0 0.5em; 
+    }
+
+    .certification .cert-info {
+        grid-area: info;
+        padding: 0 0.5em;
+        font-style: italic; 
+    }
+
+    @media (prefers-color-scheme: light) {
+        .certification {
+            background: #c4c4c4;
+        }
+    }
+    .project {
+        display: grid;
+        grid-template:  "img head" auto
+                        "img info" 1fr
+                        "img link" auto / 20% 1fr;
+        padding: 1em;
+        background:#4e4e4e;
+        margin-bottom: 1em;
+    }
+
+    .project .project-img {
+        grid-area: img;
+    }
+
+    .project .project-title {
+        grid-area: head;
+        font-size: x-large;
+        font-weight: bold;
+        padding: 0 0.5em; 
+    }
+
+    .project .project-info {
+        grid-area: info;
+        padding: 0 0.5em;
+        font-style: italic; 
+    }
+
+    .project .project-link {
+        grid-area: link;
+        padding: 0 0.5em;
+        text-align: right;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .project {
+            background: #c4c4c4;
+        }
+    }
+
+    .image {
+        display: grid;
+        grid-template:  "img" 1fr
+                        "caption" auto / 1fr auto;
+        padding: 1em;
+        background:#4e4e4e;
+        margin-bottom: 1em;
+    }
+
+    .image img {
+        grid-area: img;
+        margin: 0 auto;
+    }
+
+    .image figcaption {
+        grid-area:caption;
+        padding: 0.5em 0 0 0;
+        font-style: italic;
+        text-align: center; 
+    }
+
+    @media (prefers-color-scheme: light) {
+        .image {
+            background: #c4c4c4;
+        }
+    }
+
+    .aside {
+        padding: 1em;
+        background: #4e4e4e;
+        font-style: italic;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .aside {
+            background: #c4c4c4;
+        }
+    }
+</style></head>
+
+<body>
+  <header><a href="/" class="title">
+    <h2>Julian Webb</h2>
+  </a>
+  <nav style="display:flex"><a href="/">Home</a>
+
+<a style="order:2" href="/entries">Entries</a>
+
+
+<a style="order:1"  href="/about/">About</a>
+
+<a style="order:99"  href="/contact/">Contact</a>
+
+<a style="order:5"  href="/projects/">Projects</a>
+
+</nav>
+  </header>
+  <main>
+
+<content>
+  <h1 id="building-xcbc-a-cbc-to-discord-tool">Building xCBC: a CBC to Discord Tool</h1>
+<p><em>Published: June 7th, 2023</em></p>
+<p>For a while now, when linking to a CBC post on Discord, instead of generating a link preview using the Open Graph or Twitter meta tags, the link remains an undescriptive string that may hestiate to click on do to concerns around the trustworthiness and value of it.</p>
+<p>This, of course, leads to issues when you are in a community that likes to share news sources, if every other source has the preview, then CBC will be last choice to share.</p>
+<h2 id="the-problem">The Problem</h2>
+<p>On July 7th, 2021, the last known link preview generated by Discord from the CBC website appeared, after that any attempts to post a link to the website directly met with a roadblock.</p>
+<figure class="image">
+    <img src="/media/xcbc/link-preview-fail.png" alt="Oops" />
+    <figcaption>Ignore the timestamp, I totally have a sleep schedule.</figcaption>
+</figure>
+<p>Since the issue was self-concealing, I didn&rsquo;t really notice it until early 2022. In May I decided to do some testing to see if the problem was on Discord&rsquo;s end or CBC&rsquo;s end. Deciding to make a copy of an article&rsquo;s relevant meta tags and using them on an alternative domain.</p>
+<figure class="image">
+    <img src="/media/xcbc/link-preview-success.png" alt="" />
+    <figcaption></figcaption>
+</figure>
+<p>That worked fine, so the issue wasn&rsquo;t that the tags were incorrect, Discord would render it just fine, which was really annoying becuase if that was the problem the solution would be <em>really easy</em>.</p>
+<p>So unfortunately, it seemed something was just failing somewhere in the engima of a process Discord uses to generate previews, or maybe, it was intentional? <em>Dun dun dun&hellip;</em></p>
+<aside class="aside">Note: appropo of nothing, but anyone here know <a href='https://en.wikipedia.org/wiki/Hanlon%27s_razor'>Hanlon's Razor</a>.</aside>
+<p>With this in mind, I tried some of the other CBC domains, I found that <code>cbc.ca</code>, <code>www.cbc.ca</code>, <code>gem.cbc.ca</code>, andd <code>cbc.radio-canada.ca</code> all failed to have a link preview but <code>ici.radio-canada.ca</code> succeed.</p>
+<p>Unable to think of anything more to test, I emailed my findings to CBC, after which we commiserated over the unknown solution and the probablity that the issue was on Discord&rsquo;s end.</p>
+<h3 id="the-lightbulb-moment">The Lightbulb Moment</h3>
+<p>So a month later, while tinkering with some projects, an idea popped in my head. What if Discord wasn&rsquo;t the root of all evil?</p>
+<p>Wanting to test a theory, I used Node.js and Ngrok to get Discord&rsquo;s User-Agent: <code>Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)</code>, then I used it when visiting <code>cbc.ca</code> and well&hellip;</p>
+<figure class="image">
+    <img src="/media/xcbc/access-denied.png" alt="" />
+    <figcaption></figcaption>
+</figure>
+<p>It seems the issue wasn&rsquo;t on Discord&rsquo;s side after all! On both <code>cbc.ca</code> and <code>www.cbc.ca</code>, we get this response. This doesn&rsquo;t explain the issues on <code>gem.cbc.ca</code> or <code>cbc.radio-canada.ca</code> but it turns out those both are more easily explainable: invalid meta tags!</p>
+<aside class="aside">I wonder why it Twitter made it through the whitelist but not Discord?</aside>
+<p>Gem seems to just be missing the required tags entirely while Radio Canada seems to initial load the page with empty meta tags to be filled as the page further loads, which just doesn&rsquo;t work when services are scraping the basic page for the tags.</p>
+<p>Armed with slightly more useful knowledge than before, I sent off further information on June 12th explaining what I found to CBC, in hopes they&rsquo;d solve it.</p>
+<p>As of July 7th, I have yet to hear back.</p>
+<h2 id="the-solution">The Solution</h2>
+<p>So now, what can be done about the issue? I don&rsquo;t know if my email to the CBC got thrown in the void or just ignored. A real solution would come from them but who knows when or if that will happen?</p>
+<p>But that&rsquo;s quitter talk, I know the pros and the cons of gramming, I can take a shot at some sort of solution.</p>
+<p>So I present: xCBC!</p>
+<h2 id="the-plan">The Plan</h2>
+<p>I am far from the first person to create a service meant to enhance another site, nor am I the first to think of extending a domain for ease of use of the service. In this case the idea is to have users prepend a character to the regular CBC domain when posting a link to an article on Discord, at which point Discord will ask xCBC for it&rsquo;s meta tags that it will pull either from cache or from CBC using a whitelisted User Agent.</p>
+<p>Then, if a user clicks through the link, xCBC will redirect the user to CBC article for proper viewing. Simple!</p>
+<figure class="image">
+    <img src="/media/xcbc/the-plan.png" alt="" />
+    <figcaption>I'm sure this clears things up. /s</figcaption>
+</figure>
+<h2 id="the-domain-and-project-name">The Domain (and Project Name)</h2>
+<p>The first thing to do in such a project, is of course name it. I needed it to be [something]CBC since the branding of it needs to match the domain and the domain has to be a simple addition to <code>cbc.ca</code>.</p>
+<p>I decided to go with xCBC because it satisfied the conditions, was close to the Paste shortcut (on desktop), and most importantly the domain was available for registeration.</p>
+<aside class="aside">Get $6.46 off your first purchase with my <a href='https://www.name.com/referral/302312'>Name.com referral</a>.</aside>
+<h2 id="the-first-attempt">The First Attempt</h2>
+<p>My inital thinking for the application is a simple catch-all <a href="https://www.fastify.io/">Fastify</a> server with a <a href="https://www.npmjs.com/package/better-sqlite3">Sqlite3</a> database as the cache and using Node v18&rsquo;s built-in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">Fetch</a> to handle the fetching. The cache may be overkill since Discord also caches it&rsquo;s link previews, but one of my goals is to not over-query CBC&rsquo;s site, <em>just in case.</em></p>
+<p>After a bunch of bug-testing, I realized that fiddling with Node&rsquo;s Fetch wasn&rsquo;t actually work it and instead switched to using <a href="https://github.com/sindresorhus/got">Got</a>, sure this was mainly due to my eyes glazing over when I thought about having to implement my own stream consumer but all those extra packages weren&rsquo;t going to install themselves!</p>
+<aside class="aside">Specifically I used Got v11, since I didn't want to have to deal with mixing CommonJS and ESM.</aside>
+<p>This version <em>did</em> technically work, testing it manually did show me the end results I was looking for. Unfortunately, the time it was taking to fetch the page from CBC, parse it, cache it, then send it off was too long for Discord to stick around for (around 4 seconds).</p>
+<figure class="image">
+    <img src="/media/xcbc/discord-denied.jpg" alt="" />
+    <figcaption>Discord's reaction to my work so far.<br />Photo by <a href='https://www.pexels.com/@karolina-grabowska/'>Karolina Grabowska</a></figcaption>
+</figure>
+<p>So there was nothing to do but to refactor and see what I could do to deal with the slow-down.</p>
+<h2 id="the-second-attempt">The Second Attempt</h2>
+<p>So after the learning experience of the first attempt, I think the second attempt actually went very well. There&rsquo;s really only a couple of things I changed.</p>
+<h3 id="starting-the-reply-eariler">Starting the Reply Eariler</h3>
+<p>By switch from using Fastify&rsquo;s builtin <code>reply.send()</code> to <code>reply.raw</code>, I was able to send the first part of the page before fetching from CBC, making it so Discord wouldn&rsquo;t cancel out of the request so quickly. It was still taking more time than I would have liked to fetch but I don&rsquo;t think there is much I can do about that.</p>
+<h3 id="ditching-the-cache">Ditching the Cache</h3>
+<p>Well, not entirely. As I was reading through Got&rsquo;s documentation I found out that it actually has a built-in caching mechanism, which was great as that meant I could pitch my attempt at one and really streamline the flow of the app. Now instead of having to do the freshness logic myself, I just needed to fetch.</p>
+<p>With only these changes, I had it working as intended and my bespoke logic down to about the same length as my parameter checking. It&rsquo;s honestly a bit funny how little of my own code there is in this. I could in the future Remove some dependencies (I am basically using the built-in <code>HTTP.ServerResponse</code> object, and I am sure I could learn to use Fetch. That&rsquo;s a problem for future me.</p>
+<aside class="aside">From experience, a lot of problems end up in future me's todo list.</aside>
+<h2 id="the-wrap-up">The Wrap-Up</h2>
+<p>All that was left to do was to build the docker image, set it up behind a reverse-proxy (Traefik, of course), and set up a small <a href="https://xcbc.ca">landing page</a> for those curious enough.</p>
+<p>I don&rsquo;t know what the future holds for this, it may or may not get used. Maybe nobody will care, but I&rsquo;ll be happy enough knowing that I put my effort towards providing solutions.</p>
+
+</content>
+<p>
+  
+  <a href="http://julianwebb.ca/blog/cbc/">#cbc</a>
+  
+  <a href="http://julianwebb.ca/blog/discord/">#discord</a>
+  
+  <a href="http://julianwebb.ca/blog/nodejs/">#nodejs</a>
+  
+  <a href="http://julianwebb.ca/blog/docker/">#docker</a>
+  
+  <a href="http://julianwebb.ca/blog/traefik/">#traefik</a>
+  
+  <a href="http://julianwebb.ca/blog/programming/">#programming</a>
+  
+</p>
+
+  </main>
+  <footer>
+</footer>
+
+    
+</body>
+
+</html>

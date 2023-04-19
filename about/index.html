@@ -5,13 +5,13 @@
   <meta http-equiv="X-Clacks-Overhead" content="GNU Terry Pratchett" />
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="shortcut icon" href="http://localhost/icons/favicon.ico" />
+<link rel="shortcut icon" href="http://julianwebb.ca/icons/favicon.ico" />
 <title>About | Julian Webb</title>
 <meta name="title" content="About" />
 <meta name="description" content="About Hello, my name is Julian Webb.
 I am a self-taught programmer, web developer, documenation reader and a pro-taught Network Engineer and System Administrator.
 In my hobbies, I frequently create things, sometimes finishing them. My hope is to document my process and learnings here, if only so I can go back and remember what I know.
-Licenses and Certifications Small Drone Basic Operations Obtained July 2022  Amazon Web Services Cloud Practitioner Obtained August 2022  CompTIA A&#43; Obtained December 2022  LPI Linux Essentials Obtained December 2022  ETA Customer Service Specialist Obtained April 2023  CompTIA Security&#43; Obtained May 2023  Cisco CCNA Obtained May 2023" />
+Experience As I don&rsquo;t really have any current experience in the fields I wish to work in, have a link to my LinkedIn instead." />
 <meta name="keywords" content="" />
 
 
@@ -19,23 +19,23 @@ Licenses and Certifications Small Drone Basic Operations Obtained July 2022  Ama
 <meta property="og:description" content="About Hello, my name is Julian Webb.
 I am a self-taught programmer, web developer, documenation reader and a pro-taught Network Engineer and System Administrator.
 In my hobbies, I frequently create things, sometimes finishing them. My hope is to document my process and learnings here, if only so I can go back and remember what I know.
-Licenses and Certifications Small Drone Basic Operations Obtained July 2022  Amazon Web Services Cloud Practitioner Obtained August 2022  CompTIA A&#43; Obtained December 2022  LPI Linux Essentials Obtained December 2022  ETA Customer Service Specialist Obtained April 2023  CompTIA Security&#43; Obtained May 2023  Cisco CCNA Obtained May 2023" />
+Experience As I don&rsquo;t really have any current experience in the fields I wish to work in, have a link to my LinkedIn instead." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://localhost/about/" /><meta property="og:image" content="http://localhost/images/share.png"/><meta property="article:section" content="" />
+<meta property="og:url" content="http://julianwebb.ca/about/" /><meta property="og:image" content="http://julianwebb.ca/images/share.png"/><meta property="article:section" content="" />
 
-<meta property="og:site_name" content="Hugo ʕ•ᴥ•ʔ Bear" />
+<meta property="og:site_name" content="Julian Webb" />
 
 
 
 
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="http://localhost/images/share.png"/>
+<meta name="twitter:image" content="http://julianwebb.ca/images/share.png"/>
 
 <meta name="twitter:title" content="About"/>
 <meta name="twitter:description" content="About Hello, my name is Julian Webb.
 I am a self-taught programmer, web developer, documenation reader and a pro-taught Network Engineer and System Administrator.
 In my hobbies, I frequently create things, sometimes finishing them. My hope is to document my process and learnings here, if only so I can go back and remember what I know.
-Licenses and Certifications Small Drone Basic Operations Obtained July 2022  Amazon Web Services Cloud Practitioner Obtained August 2022  CompTIA A&#43; Obtained December 2022  LPI Linux Essentials Obtained December 2022  ETA Customer Service Specialist Obtained April 2023  CompTIA Security&#43; Obtained May 2023  Cisco CCNA Obtained May 2023"/>
+Experience As I don&rsquo;t really have any current experience in the fields I wish to work in, have a link to my LinkedIn instead."/>
 
 
 
@@ -43,9 +43,9 @@ Licenses and Certifications Small Drone Basic Operations Obtained July 2022  Ama
 <meta itemprop="description" content="About Hello, my name is Julian Webb.
 I am a self-taught programmer, web developer, documenation reader and a pro-taught Network Engineer and System Administrator.
 In my hobbies, I frequently create things, sometimes finishing them. My hope is to document my process and learnings here, if only so I can go back and remember what I know.
-Licenses and Certifications Small Drone Basic Operations Obtained July 2022  Amazon Web Services Cloud Practitioner Obtained August 2022  CompTIA A&#43; Obtained December 2022  LPI Linux Essentials Obtained December 2022  ETA Customer Service Specialist Obtained April 2023  CompTIA Security&#43; Obtained May 2023  Cisco CCNA Obtained May 2023">
+Experience As I don&rsquo;t really have any current experience in the fields I wish to work in, have a link to my LinkedIn instead.">
 
-<meta itemprop="wordCount" content="102"><meta itemprop="image" content="http://localhost/images/share.png"/>
+<meta itemprop="wordCount" content="126"><meta itemprop="image" content="http://julianwebb.ca/images/share.png"/>
 <meta itemprop="keywords" content="" />
 <meta name="referrer" content="no-referrer-when-downgrade" />
 
@@ -292,6 +292,45 @@ Licenses and Certifications Small Drone Basic Operations Obtained July 2022  Ama
             background: #c4c4c4;
         }
     }
+
+    .image {
+        display: grid;
+        grid-template:  "img" 1fr
+                        "caption" auto / 1fr auto;
+        padding: 1em;
+        background:#4e4e4e;
+        margin-bottom: 1em;
+    }
+
+    .image img {
+        grid-area: img;
+        margin: 0 auto;
+    }
+
+    .image figcaption {
+        grid-area:caption;
+        padding: 0.5em 0 0 0;
+        font-style: italic;
+        text-align: center; 
+    }
+
+    @media (prefers-color-scheme: light) {
+        .image {
+            background: #c4c4c4;
+        }
+    }
+
+    .aside {
+        padding: 1em;
+        background: #4e4e4e;
+        font-style: italic;
+    }
+
+    @media (prefers-color-scheme: light) {
+        .aside {
+            background: #c4c4c4;
+        }
+    }
 </style></head>
 
 <body>
@@ -318,6 +357,8 @@ Licenses and Certifications Small Drone Basic Operations Obtained July 2022  Ama
 <p>Hello, my name is Julian Webb.</p>
 <p>I am a self-taught programmer, web developer, documenation reader and a pro-taught Network Engineer and System Administrator.</p>
 <p>In my hobbies, I frequently create things, sometimes finishing them. My hope is to document my process and learnings here, if only so I can go back and remember what I know.</p>
+<h2 id="experience">Experience</h2>
+<p>As I don&rsquo;t really have any current experience in the fields I wish to work in, have a link to my <a href="https://www.linkedin.com/in/julian-webb/">LinkedIn</a> instead.</p>
 <h2 id="licenses-and-certifications">Licenses and Certifications</h2>
 <p><article class="certification">
     <img class="cert-img" src="/media/certifications/nav-can.png" />
