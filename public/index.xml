@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Julian Webb</title>
+    <link>http://localhost/</link>
+    <description>Recent content on Julian Webb</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-CA</language>
+    <copyright>Copyright © 2023, Julian Webb.</copyright><atom:link href="http://localhost/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About</title>
+      <link>http://localhost/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost/about/</guid>
+      <description>About Hello, my name is Julian Webb.
+I am a self-taught programmer, web developer, documenation reader and a pro-taught Network Engineer and System Administrator.
+In my hobbies, I frequently create things, sometimes finishing them. My hope is to document my process and learnings here, if only so I can go back and remember what I know.
+Licenses and Certifications Small Drone Basic Operations Obtained July 2022  Amazon Web Services Cloud Practitioner Obtained August 2022  CompTIA A&amp;#43; Obtained December 2022  LPI Linux Essentials Obtained December 2022  ETA Customer Service Specialist Obtained April 2023  CompTIA Security&amp;#43; Obtained May 2023  Cisco CCNA Obtained May 2023</description>
+    </item>
+    
+    <item>
+      <title>Contact</title>
+      <link>http://localhost/contact/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost/contact/</guid>
+      <description>Contact I am open to emails about my projects, log entries, potential job opportunities. Do not email me about anything Web3.
+Email You can contact me via emailing any local-part at the current domain.
+Discord My discord username is Pongles#7210, I have unsolicited DMs turned off.</description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>http://localhost/projects/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost/projects/</guid>
+      <description>Projects This is the page where I list my completed projects:
+xCBC Middle-man service to scrape CBC metadata for Discord preview. Project Homepage  Hadfield Gopher Server Hadfield is a Document-Based Gopher Server written in Javascript utilizing NodeJS. Project is in indefinite hiatus. Project Homepage</description>
+    </item>
+    
+  </channel>
+</rss>
