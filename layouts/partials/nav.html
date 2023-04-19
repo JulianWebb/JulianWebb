@@ -1,7 +1,0 @@
-<a href="{{ "" | relURL }}">Home</a>
-{{ with .Site.GetPage "/entries" }}
-<a style="order:{{ .Page.Params.order }}" href="{{ "entries" | relURL }}">Entries</a>
-{{ end }}
-{{ range .Site.Menus.main }}
-<a style="order:{{ .Page.Params.order }}"  href="{{ .URL }}">{{ .Name }}</a>
-{{ end }}
