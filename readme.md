@@ -2,7 +2,7 @@
 
 ## About me 
 
-My name is Julian Webb. I am a self-taught programmer looking to make stuff people want to use (and for a job).
+My name is Julian Webb. I am a self-taught programmer looking to make stuff people want to use.
 
 I’ve been developing on and off for decades, ever since I first got access to the internet in the 00s and learnt what a Neopet was. While most of my work is sadly lost to time, it’s definitely shaped how I think about technology today.
 
